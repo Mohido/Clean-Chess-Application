@@ -34,8 +34,8 @@ where
 inputfilename :== "in.txt"
 outputfilename :== "out.txt"
 
-//Start :: *World -> *World
-//Start world = CopyFile "in.txt" "out.txt" world
+Start :: *World -> *World
+Start world = CopyFile "in.txt" "out.txt" world
 /*
 Start :: *World -> *World
 Start world

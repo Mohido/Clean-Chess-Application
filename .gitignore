@@ -1,0 +1,9 @@
+# this is the files that git should ignore when commiting and adding.
+# make sure to add what you want to be added and remove the rest.
+
+src/Clean System Files/
+Clean System Files/
+
+
+*.prp
+*.exe
