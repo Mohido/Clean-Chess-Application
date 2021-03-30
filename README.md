@@ -9,6 +9,3 @@ Pure Functional programming application using Clean, under the suprevision of Pr
 
 # Explanations:  
 1) .cimg files: An easy readable text file (generated via a simple java program from any type of image) that contains: ImageWidth, ImageHeight , then array of rgb colours in this specific order..... each colour value is 1 byte.
-
-# Dev-Notes:
-1) For picture generating, please use the simple application we used to generate the .cimg. The software is on github of "Mohido" Contributer. Game assets should be generated as .cimg for easy reading and simplicity.
