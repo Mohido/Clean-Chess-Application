@@ -1,16 +1,8 @@
 module Chess_Board
 
-import StdEnv, StdIO, StdFunc, StdDebug ///StdFunc contains seq, StdDebug contains trace_n
+import StdEnv, StdIO, StdFunc ///StdFunc contains seq, StdDebug contains trace_n
+import Util.Reading, Util.Event, Util.Constants
 
-///constants
-TILE_SIZE :== 64 //pixels, This will be the unit size of our tiles. So every coordingate will be multiplied by it to get the precise pixel.
-
-::PiecePicture = {
-			 tileWidth::Int  , 
-			 tileHeight:: Int , 
-			 arrayOfPixels :: [RGBColour] 
-		   }
-		   
 :: Piece = {
 	xCord:: Int, 
 	yCord :: Int,
@@ -19,40 +11,6 @@ TILE_SIZE :== 64 //pixels, This will be the unit size of our tiles. So every coo
 	}
 
 
-readPicture :: *File -> (PiecePicture,*File)
-readPicture file
-	#! (b1, x, file) = freadi file
-	#! (b2, y, file) = freadi file
-	#! (pixels, file) = getPixels file 
-	| b1 && b2 = ({tileWidth = x,tileHeight = y,arrayOfPixels = pixels}, file)
-	| otherwise = abort "Reading Error 1 !"
-
-getPixels :: *File -> ([RGBColour], *File)
-getPixels file
- 	#(isEnd, file) = fend file
-  	|isEnd = ([], file)
-	# (b1,r1 ,file) = freadi file
-	# (b2,r2 ,file) = freadi file
-	# (b3,r3 ,file) = freadi file
-	| not(b1 && b2 && b3) = ([], file) 
-  	#rec = {r = r1, g = r2, b=r3}
-  	#(res,file) = getPixels file
- 	=([rec:res],file)
-	
-
-LoadPicture :: String *World ->  (PiecePicture,*World)
-LoadPicture fname w
-	#! (ok, file, w) = fopen fname FReadText w
-	| not ok = abort "Can't open"
-	#! (content, file) = readPicture file
-	//# (ok, w) = fclose file w
-	//| not ok = abort "Can't close"
-	= (content, w)
-
-instance == RGBColour
-where
-	(==) x y = x.r == y.r && x.b == y.b && x.g == y.g
-	(==) _ _ = False
 
 ::SetState = {
 			 p :: PiecePicture
@@ -73,10 +31,10 @@ where
 		window windowid piece = Window "Title" NilLS
 					[	
 					  WindowId windowid,
-					  WindowClose quit, /// using the quit function defined below.
-					  WindowViewSize {w = 8*TILE_SIZE, h = 8*TILE_SIZE}, /// defining the size of the window.
-					  WindowLook False (paintFun piece),   /// This will take the state and update state away.
-					  WindowMouse (const True) Able handlingMouseEvent /// defines a mouse event system and attach handlingMouseEvent function to it.
+					  WindowClose quit, 									/// using the quit function defined below.
+					  WindowViewSize {w = 8*TILE_SIZE, h = 8*TILE_SIZE}, 	/// defining the size of the window.
+					  WindowLook False (paintFun piece),   					/// This will take the state and update state away.
+					  WindowMouse (const True) Able handlingMouseEvent 		/// defines a mouse event system and attach handlingMouseEvent function to it.
 					  ]
 		
 		///__________ Window painting functions __________________
@@ -88,40 +46,37 @@ where
 		*/
 		paintFun :: PiecePicture SelectState UpdateState *Picture -> *Picture  //style 2 more suffecient.
 		paintFun piece _ _ pic
-		# rgbColour = {r =130, g=63, b=59}
-		# pic = setPenColour (RGB rgbColour) pic  // this is for setting the colour of the brush.
-		= paintPiece piece {x =0 , y= 0} (seq fillingFunctions pic)	  //   Apply a set of functions on an object sequently.
+		# rgbColour = {r =130, g=63, b=59} 
+		# pic = setPenColour (RGB rgbColour) pic // this is for setting the colour of the brush.
+		= seq ([paintPiece piece {x =xp , y= yp} \\ xp<-[0..7], yp<-[0,1,6,7]]) (seq fillingFunctions pic)	  //   Apply a set of functions on an object sequently.
 		where
 			tile = {box_w = TILE_SIZE, box_h = TILE_SIZE} 	/// eventually a box.
-			fillingFunctions = [ fillAt {x=ycord*TILE_SIZE, y=xcord*TILE_SIZE} tile  ///List oof functions where we are supposed to fill a tile. 
-									\\ xcord <- [0..7] , ycord <- [0..7] 
-									| (xcord rem 2 == 0 && ycord rem 2 == 0) || (xcord rem 2 <>  0 && ycord rem 2 <> 0)]
+			fillingFunctions = [fillAt {x=ycord*TILE_SIZE, y=xcord*TILE_SIZE} tile \\ xcord <- [0..7] , ycord <- [0..7]|(xcord rem 2 == 0 && ycord rem 2 == 0) || (xcord rem 2 <>  0 && ycord rem 2 <> 0)]
 		
 		
-		///____________ Mouse Handling events functions_____________
-		
-		handlingMouseEvent :: MouseState (.ls, *PSt .l) -> (.ls,*PSt .l)
-		handlingMouseEvent (MouseDown hitPoint _ _) pst	
-			# msg = ("clicked tile: (" +++ toString (hitPoint.x / TILE_SIZE) +++ ", " +++ toString (hitPoint.y / TILE_SIZE) +++ ")")
-			=  trace_n msg pst
-		handlingMouseEvent _ pst =  pst
-		
-		
-		///____________ Other Window Handling events functions_____________
-		
-		quit:: (.ls, *PSt .l) -> (.ls, *PSt .l)
-		quit (local, pst) = (local, closeProcess pst)
-
-	
-	
 		/// ___________ Rendering Pieces functions
+		
 		paintPiece :: PiecePicture !Point2  *Picture -> *Picture
-		paintPiece pie coord pic  = paintPieceAux  pointsAndColours pic
+		paintPiece pie coord pic  = paintPieceAux  (pointsAndColours) pic //To try the tail recursive way, replace with (pointsAndColours 0 0 [])
 		where 
+			
 			pointsAndColours = [ ((coord.x*TILE_SIZE + yPixel, coord.y*TILE_SIZE + xPixel)
 				, getPixelValue (xPixel, yPixel) pie )
 				\\ yPixel <- [0..TILE_SIZE] ,  xPixel <- [0..TILE_SIZE] | not ( getPixelValue (xPixel, yPixel) pie == {r=255, g=0, b=255}) ]
-		
+			
+			//Tail Recursion doesn't really make a differnece preformance wise, approach is still very slow. 
+			
+			//Tail Recursive:
+			/*
+			pointsAndColours :: Int Int [((Int ,Int) , RGBColour)] -> [((Int ,Int) , RGBColour)] 
+			pointsAndColours _  TILE_SIZE acc = acc
+			pointsAndColours TILE_SIZE y acc = pointsAndColours 0 (y+1) acc  
+			pointsAndColours xPixel yPixel acc 
+			| (myColour == {r=255, g=0, b=255}) = pointsAndColours (xPixel + 1) yPixel acc
+			= pointsAndColours (xPixel + 1) yPixel (acc++[((coord.x*TILE_SIZE + yPixel, coord.y*TILE_SIZE + xPixel),myColour)]) 
+				where
+				myColour = getPixelValue (xPixel,yPixel) pie
+			*/
 			paintPieceAux :: [((Int ,Int) , RGBColour )] *Picture -> *Picture
 			paintPieceAux [] pic = pic
 			paintPieceAux [( (x,y) , rgb ) : rest ] pic
@@ -135,7 +90,4 @@ where
 		# yRatio = TILE_SIZE / piece.tileHeight
 		# index =  (x/xRatio) + (y/yRatio) * piece.tileWidth
 		| index >= length piece.arrayOfPixels = {r=0, g=0, b=0}
-		= piece.arrayOfPixels!!index 
-
-
-
+		= piece.arrayOfPixels!!index
