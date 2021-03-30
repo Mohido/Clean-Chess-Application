@@ -8,4 +8,5 @@ Pure Functional programming application using Clean, under the suprevision of Pr
 <br/>
 
 # Explanations:  
-1) .cimg files: An easy readable text file (generated via a simple java program from any type of image) that contains: ImageWidth, ImageHeight , then array of rgb colours in this specific order..... each colour value is 1 byte.
+1) .cimg files: An easy readable text file (generated via a simple java program from any type of image) that contains: ImageWidth, ImageHeight , then array of rgb colours in this specific order..... each colour value is 1 byte. You can download the .cimg generator from the github of "Mohido" Contributer.
+
