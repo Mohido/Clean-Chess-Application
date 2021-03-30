@@ -13,7 +13,7 @@ import Util.Reading, Util.Event, Util.Constants
 
 
 ::SetState = {
-			 p :: PiecePicture
+		p :: PiecePicture
 		   }
 		   
 
@@ -31,10 +31,10 @@ where
 		window windowid piece = Window "Title" NilLS
 					[	
 					  WindowId windowid,
-					  WindowClose quit, 									/// using the quit function defined below.
+					  WindowClose quit, 					/// using the quit function defined below.
 					  WindowViewSize {w = 8*TILE_SIZE, h = 8*TILE_SIZE}, 	/// defining the size of the window.
-					  WindowLook False (paintFun piece),   					/// This will take the state and update state away.
-					  WindowMouse (const True) Able handlingMouseEvent 		/// defines a mouse event system and attach handlingMouseEvent function to it.
+					  WindowLook False (paintFun piece),   			/// This will take the state and update state away.
+					  WindowMouse (const True) Able handlingMouseEvent 	/// defines a mouse event system and attach handlingMouseEvent function to it.
 					  ]
 		
 		///__________ Window painting functions __________________
