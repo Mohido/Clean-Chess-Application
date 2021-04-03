@@ -1,26 +1,30 @@
 module Chess_Board
 
-import StdEnv, StdIO, StdFunc ///StdFunc contains seq, StdDebug contains trace_n
+import StdEnv, StdIO, StdFunc, StdDebug ///StdFunc contains seq, StdDebug contains trace_n
 import Util.Reading, Util.Event, Util.Constants
+
+
 
 :: Piece = {
 	xCord:: Int, 
 	yCord :: Int,
-	player:: Int, 
+	player:: Int,  /*type:: PieceType,*/ // Note: Piece type is currently implemented in aldokimi's code and we are waiting for him to merge the file.
 	sprite:: PiecePicture
 	}
 
 
-
-::SetState = {
-		p :: PiecePicture
-		   }
+/// Our current game state type (Though we are not using it and waiting for dokimi to complete implementing the file he is working on rn.)
+::GameState = {
+		worldMatrix :: {#Piece},
+		selectedPiece :: Piece,
+		windowId :: !Id
+	}
 		   
 
 Start:: *World -> *World
 Start world 
 #! (piece, world) = LoadPicture "white_queen.cimg" world
-= startIO SDI {p = piece} (initProcessState piece) [ProcessClose closeProcess] world
+= startIO SDI Void (initProcessState piece) [ProcessClose closeProcess] world
 where 
 	initProcessState piece pst /// initialization of the interface program.
 	# (windowid , pst) = openId pst
@@ -34,8 +38,12 @@ where
 					  WindowClose quit, 					/// using the quit function defined below.
 					  WindowViewSize {w = 8*TILE_SIZE, h = 8*TILE_SIZE}, 	/// defining the size of the window.
 					  WindowLook False (paintFun piece),   			/// This will take the state and update state away.
-					  WindowMouse (const True) Able handlingMouseEvent 	/// defines a mouse event system and attach handlingMouseEvent function to it.
+					  WindowMouse (const True) Able (temporaryHandler piece windowid)	/// defines a mouse event system and attach handlingMouseEvent function to it.
 					  ]
+		
+		
+		
+		
 		
 		///__________ Window painting functions __________________
 		/**
@@ -57,6 +65,10 @@ where
 			fillBoard pic = (seq fillingFunctions pic)
 			tile = {box_w = TILE_SIZE, box_h = TILE_SIZE} 	/// eventually a box.
 			fillingFunctions = [fillAt {x=ycord*TILE_SIZE, y=xcord*TILE_SIZE} tile \\ xcord <- [0..7] , ycord <- [0..7]|(xcord rem 2 == 0 && ycord rem 2 == 0) || (xcord rem 2 <>  0 && ycord rem 2 <> 0)]
+		
+		
+		
+		
 		
 		
 		/// ___________ Rendering Pieces functions
@@ -95,3 +107,35 @@ where
 		# index =  (x/xRatio) + (y/yRatio) * piece.tileWidth
 		| index >= length piece.arrayOfPixels = {r=0, g=0, b=0}
 		= piece.arrayOfPixels!!index
+
+
+
+ 
+
+	/// ________________ Temporary Functions! ____________
+	
+		/// This temporary Handler should be in place of the mouse handler,
+		/// The windowID and the sprite (PiecePicture) should be in the GameState.
+		temporaryHandler :: PiecePicture !Id MouseState (.ls, *PSt .l) -> (.ls,*PSt .l)
+		temporaryHandler piece winid (MouseDown hitPoint _ _) pst=:(ls,ps=:{io})
+		# msg = ("clicked tile: (" +++ toString (hitPoint.x / TILE_SIZE) +++ ", " +++ toString (hitPoint.y / TILE_SIZE) +++ ")" +++ " The Piece is: " )
+		# pointoo = {x = TILE_SIZE * (hitPoint.x/TILE_SIZE) , y = TILE_SIZE * (hitPoint.y/TILE_SIZE)}
+		# io = appWindowPicture winid (trace_n ("hitpoint redneirngaisdfu" +++ toString pointoo.x) 
+											   (paintPiece piece {x=(hitPoint.x / TILE_SIZE),y = (hitPoint.y / TILE_SIZE)})) io
+		=  ( ls, {ps & io = setWindowLook winid False (False, paintFun piece) io})
+		temporaryHandler _ _ _ pst =  pst
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
