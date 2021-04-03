@@ -45,11 +45,16 @@ where
 			Note: This function is called whenever a refresh to the page is needed or we can make the window call it explicitly from somewhere else.
 		*/
 		paintFun :: PiecePicture SelectState UpdateState *Picture -> *Picture  //style 2 more suffecient.
-		paintFun piece _ _ pic
+		paintFun piece _ {oldFrame, newFrame} pic
+		# newFrameSize = rectangleSize newFrame /// The new Window rectangle size
+		# oldFrameSize = rectangleSize oldFrame /// The old Window rectangle size
+		| newFrameSize.w > 8*TILE_SIZE || newFrameSize.h > 8*TILE_SIZE = pic ///If window resizing is not impacting the main area of the game don't redraw the whole game.
 		# rgbColour = {r =130, g=63, b=59} 
 		# pic = setPenColour (RGB rgbColour) pic // this is for setting the colour of the brush.
-		= seq ([paintPiece piece {x =xp , y= yp} \\ xp<-[0..7], yp<-[0,1,6,7]]) (seq fillingFunctions pic)	  //   Apply a set of functions on an object sequently.
+		= fillPieces (fillBoard pic)
 		where
+			fillPieces = seq [paintPiece piece {x =xpos , y= ypos} \\ xpos <- [0..7], ypos <- [0..7] | (ypos < 2) || (ypos > 5) ]
+			fillBoard pic = (seq fillingFunctions pic)
 			tile = {box_w = TILE_SIZE, box_h = TILE_SIZE} 	/// eventually a box.
 			fillingFunctions = [fillAt {x=ycord*TILE_SIZE, y=xcord*TILE_SIZE} tile \\ xcord <- [0..7] , ycord <- [0..7]|(xcord rem 2 == 0 && ycord rem 2 == 0) || (xcord rem 2 <>  0 && ycord rem 2 <> 0)]
 		
@@ -59,7 +64,6 @@ where
 		paintPiece :: PiecePicture !Point2  *Picture -> *Picture
 		paintPiece pie coord pic  = paintPieceAux  (pointsAndColours) pic //To try the tail recursive way, replace with (pointsAndColours 0 0 [])
 		where 
-			
 			pointsAndColours = [ ((coord.x*TILE_SIZE + yPixel, coord.y*TILE_SIZE + xPixel)
 				, getPixelValue (xPixel, yPixel) pie )
 				\\ yPixel <- [0..TILE_SIZE] ,  xPixel <- [0..TILE_SIZE] | not ( getPixelValue (xPixel, yPixel) pie == {r=255, g=0, b=255}) ]
