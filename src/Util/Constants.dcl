@@ -29,4 +29,8 @@ instance == RGBColour
 	sprite:: PiecePicture
 	}
 
-
+::GameState = {
+			worldMatrix :: {#Piece},
+			selectedPiece :: Piece,
+			windowId :: !Id
+		}

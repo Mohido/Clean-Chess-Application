@@ -24,3 +24,4 @@ instance == RGBColour
 where
 	(==) x y = x.r == y.r && x.b == y.b && x.g == y.g
 	(==) _ _ = False
+	

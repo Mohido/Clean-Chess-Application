@@ -5,17 +5,6 @@ import Util.Reading, Util.Event, Util.Constants
 
 
 
-
-
-
-/// Our current game state type (Though we are not using it and waiting for dokimi to complete implementing the file he is working on rn.)
-::GameState = {
-		worldMatrix :: {#Piece},
-		selectedPiece :: Piece,
-		windowId :: !Id
-	}
-		   
-
 Start:: *World -> *World
 Start world 
 #! (piece, world) = LoadPicture "white_queen.cimg" world
