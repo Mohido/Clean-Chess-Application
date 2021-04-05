@@ -1,11 +1,8 @@
 implementation module Util.Reading
 
-import StdEnv, StdIO
+import StdEnv, StdIO, Util.Constants
 
-instance == RGBColour
-where
-	(==) x y = x.r == y.r && x.b == y.b && x.g == y.g
-	(==) _ _ = False
+
 
 getPixels :: *File -> ([RGBColour], *File)
 getPixels file
@@ -21,17 +18,20 @@ getPixels file
 
 readPicture :: *File -> (PiecePicture,*File)
 readPicture file
-	#! (b1, x, file) = freadi file
-	#! (b2, y, file) = freadi file
-	#! (pixels, file) = getPixels file 
+	# (b1, x, file) = freadi file
+	# (b2, y, file) = freadi file
+	# (pixels, file) = getArrayOfPixels( getPixels file )
 	| b1 && b2 = ({tileWidth = x,tileHeight = y,arrayOfPixels = pixels}, file)
 	| otherwise = abort "Reading Error 1 !"
+	
+getArrayOfPixels :: ([RGBColour], *File) -> ({#RGBColour}, *File)
+getArrayOfPixels (list,file) = ({x\\x <- list} , file)
 
 LoadPicture :: String *World ->  (PiecePicture,*World)
 LoadPicture fname w
-	#! (ok, file, w) = fopen fname FReadText w
+	# (ok, file, w) = fopen fname FReadText w
 	| not ok = abort "Can't open"
-	#! (content, file) = readPicture file
+	# (content, file) = readPicture file
 	//# (ok, w) = fclose file w
 	//| not ok = abort "Can't close"
 	= (content, w)

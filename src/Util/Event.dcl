@@ -1,6 +1,6 @@
 definition module Util.Event
 
-import StdEnv, StdIO
+import StdEnv, StdIO, Util.Constants
 
 handlingMouseEvent :: MouseState (.ls, *PSt .l) -> (.ls,*PSt .l)
 

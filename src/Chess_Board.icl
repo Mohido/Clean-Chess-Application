@@ -5,12 +5,7 @@ import Util.Reading, Util.Event, Util.Constants
 
 
 
-:: Piece = {
-	xCord:: Int, 
-	yCord :: Int,
-	player:: Int,  /*type:: PieceType,*/ // Note: Piece type is currently implemented in aldokimi's code and we are waiting for him to merge the file.
-	sprite:: PiecePicture
-	}
+
 
 
 /// Our current game state type (Though we are not using it and waiting for dokimi to complete implementing the file he is working on rn.)
@@ -105,9 +100,8 @@ where
 		# xRatio = TILE_SIZE / piece.tileWidth
 		# yRatio = TILE_SIZE / piece.tileHeight
 		# index =  (x/xRatio) + (y/yRatio) * piece.tileWidth
-		| index >= length piece.arrayOfPixels = {r=0, g=0, b=0}
-		= piece.arrayOfPixels!!index
-
+		| index >= size piece.arrayOfPixels = {r=0, g=0, b=0}
+		= piece.arrayOfPixels.[index]
 
 
  
