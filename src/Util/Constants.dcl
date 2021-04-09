@@ -5,6 +5,19 @@ import StdEnv, StdIO
 //TILE SIZE
 TILE_SIZE :== 64
 
+
+//Window Content Size (Rectangle)
+pictDomain :== {corner1 = {x=0		    , y=0},
+				corner2 = {x=8*TILE_SIZE, y=8*TILE_SIZE}}  	
+
+
+
+tile :== {box_w = TILE_SIZE, box_h = TILE_SIZE}
+
+
+
+
+
 ::ChessType = Rook | Knight | Bishop | Queen | King | Pawn | NotPiece
 
 instance == ChessType
@@ -30,3 +43,12 @@ instance == RGBColour
 	}
 
 
+
+:: Board :== {!(Maybe Piece)}
+
+
+::GameState = {
+		worldMatrix :: !Board ,
+		selectedPiece :: Maybe Piece,
+		windowId :: !Id
+	}
