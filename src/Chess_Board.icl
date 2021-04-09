@@ -1,7 +1,7 @@
 module Chess_Board
 
 import StdEnv, StdIO, StdFunc, StdDebug ///StdFunc contains seq, StdDebug contains trace_n
-import Util.Reading, Util.Event, Util.Constants
+import Util.Reading, Util.Event, Util.Constants, Util.CostumFunctions
 
 
 
@@ -56,21 +56,25 @@ where
 		# pic = setPenColour (RGB rgbColour) pic // this is for setting the colour of the brush.
 		= fillPieces (fillBoard pic)
 		where
-			fillPieces = seq [paintPiece piece {x =xpos , y= ypos} \\ xpos <- [0..7], ypos <- [0..7] | (ypos < 2) || (ypos > 5) ]
-			fillBoard pic = (seq fillingFunctions pic)
+			/// containers area
+			piecePainters = {paintPiece piece {x =xpos , y= ypos} \\ xpos <- [0..7], ypos <- [0..7] | (ypos < 2) || (ypos > 5)}
 			tile = {box_w = TILE_SIZE, box_h = TILE_SIZE} 	/// eventually a box.
-			fillingFunctions = [fillAt {x=ycord*TILE_SIZE, y=xcord*TILE_SIZE} tile \\ xcord <- [0..7] , ycord <- [0..7]|(xcord rem 2 == 0 && ycord rem 2 == 0) || (xcord rem 2 <>  0 && ycord rem 2 <> 0)]
-		
-		
-		
-		
+			fillingFunctions = {fillAt {x=ycord*TILE_SIZE, y=xcord*TILE_SIZE} tile \\ xcord <- [0..7] , ycord <- [0..7]|(xcord rem 2 == 0 && ycord rem 2 == 0) || (xcord rem 2 <>  0 && ycord rem 2 <> 0)}
+			/// applied functions area
+			fillPieces = seqArray piecePainters // pic
+			fillBoard = seqArray fillingFunctions //pic
+			
 		
 		
 		/// ___________ Rendering Pieces functions
 		
 		paintPiece :: PiecePicture !Point2  *Picture -> *Picture
-		paintPiece pie coord pic  = paintPieceAux  (pointsAndColours) pic //To try the tail recursive way, replace with (pointsAndColours 0 0 [])
+		paintPiece pie coord pic  = arrayPaintPieceAux  (arrayPointsAndColours) pic 0//To try the tail recursive way, replace with (pointsAndColours 0 0 [])
 		where 
+			arrayPointsAndColours = { ((coord.x*TILE_SIZE + yPixel, coord.y*TILE_SIZE + xPixel)
+				, getPixelValue (xPixel, yPixel) pie )
+				\\ yPixel <- [0..TILE_SIZE] ,  xPixel <- [0..TILE_SIZE] | not ( getPixelValue (xPixel, yPixel) pie == {r=255, g=0, b=255}) }
+			
 			pointsAndColours = [ ((coord.x*TILE_SIZE + yPixel, coord.y*TILE_SIZE + xPixel)
 				, getPixelValue (xPixel, yPixel) pie )
 				\\ yPixel <- [0..TILE_SIZE] ,  xPixel <- [0..TILE_SIZE] | not ( getPixelValue (xPixel, yPixel) pie == {r=255, g=0, b=255}) ]
@@ -88,12 +92,19 @@ where
 				where
 				myColour = getPixelValue (xPixel,yPixel) pie
 			*/
+			
 			paintPieceAux :: [((Int ,Int) , RGBColour )] *Picture -> *Picture
 			paintPieceAux [] pic = pic
 			paintPieceAux [( (x,y) , rgb ) : rest ] pic
 			# pic = setPenColour (RGB rgb) pic 
 			= paintPieceAux rest (drawPointAt {x = x, y = y} pic)
-		
+			
+			arrayPaintPieceAux :: {((Int ,Int) , RGBColour )} *Picture Int -> *Picture
+			arrayPaintPieceAux arr pic ind
+			| ind >= size (arr) = pic
+			# ((x,y),rgb) = arr.[ind]
+			# pic = setPenColour (RGB rgb) pic 
+			= arrayPaintPieceAux arr (drawPointAt {x = x, y = y} pic) (ind+1)
 		
 		getPixelValue ::  (Int, Int) PiecePicture -> RGBColour
 		getPixelValue (x,y) piece
@@ -110,12 +121,11 @@ where
 	
 		/// This temporary Handler should be in place of the mouse handler,
 		/// The windowID and the sprite (PiecePicture) should be in the GameState.
+		///<
 		temporaryHandler :: PiecePicture !Id MouseState (.ls, *PSt .l) -> (.ls,*PSt .l)
 		temporaryHandler piece winid (MouseDown hitPoint _ _) pst=:(ls,ps=:{io})
-		# msg = ("clicked tile: (" +++ toString (hitPoint.x / TILE_SIZE) +++ ", " +++ toString (hitPoint.y / TILE_SIZE) +++ ")" +++ " The Piece is: " )
 		# pointoo = {x = TILE_SIZE * (hitPoint.x/TILE_SIZE) , y = TILE_SIZE * (hitPoint.y/TILE_SIZE)}
-		# io = appWindowPicture winid (trace_n ("hitpoint redneirngaisdfu" +++ toString pointoo.x) 
-											   (paintPiece piece {x=(hitPoint.x / TILE_SIZE),y = (hitPoint.y / TILE_SIZE)})) io
+		# io = appWindowPicture winid (paintPiece piece {x=(hitPoint.x / TILE_SIZE),y = (hitPoint.y / TILE_SIZE)}) io
 		=  ( ls, {ps & io = setWindowLook winid False (False, paintFun piece) io})
 		temporaryHandler _ _ _ pst =  pst
 	
