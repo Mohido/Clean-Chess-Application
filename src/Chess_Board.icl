@@ -3,15 +3,6 @@ module Chess_Board
 import StdEnv, StdIO, StdFunc, StdDebug ///StdFunc contains seq, StdDebug contains trace_n
 import Util.Reading, Util.Event, Util.Constants, Util.CostumFunctions, Util.Rendering
 
-instance +++ Board 
-where
-	(+++) :: !Board !Board -> !Board
-	(+++) arr1 arr2
-	#! arr1_list = [elem \\ elem <-:arr1]
-	#! arr2_list = [elem \\ elem <-:arr1]
-	#! final_list = arr1_list ++ arr2_list
-	= {elem \\ elem <- final_list}
-
 
 
 //Start Function and Initializing game assets
@@ -44,15 +35,13 @@ where
 	
 	initBoard = [Nothing, Nothing, Just bp_b_piece, Nothing, Nothing, Just {bp_b_piece & xCord = 5}, Nothing, Nothing] ++ 
 				[Just { xCord = x, yCord = 1,  player = BlackPiece, type = Pawn, sprite = p_b_sprite}  \\ x <- [0..7]] ++
-				[Nothing \\ s <- [0..7*5]] ++  //middle empty area.
+				[Nothing \\ s <- [0..7], y <- [1..4]] ++  //middle empty area.
 				[Just { xCord = x, yCord = 6,  player = WhitePiece, type = Pawn, sprite = p_w_sprite}  \\ x <- [0..7]] ++
 				[Nothing, Nothing, Just bp_w_piece, Nothing, Just wq_piece, Just {bp_w_piece & xCord = 5}, Nothing, Nothing]
 				
 	// main board, with 8*8 pieces or nothing.
 	board :: !Board
 	board =  { p \\ p <- initBoard } 	//Initial board.
-
-
 
 //_____________________________________________________________________________
 
@@ -70,7 +59,8 @@ where
 									WindowId wid,
 									WindowClose quit, 
 									WindowViewSize {w = 8*TILE_SIZE, h = 8*TILE_SIZE}, 	/// defining the size of the window.
-									WindowLook False (look preBoard) 				/// This will take the state and update state away.
+									WindowLook False (look preBoard) ,				/// This will take the state and update state away.
+									WindowMouse m_filter Able mouseHandler
 								]
 
 
