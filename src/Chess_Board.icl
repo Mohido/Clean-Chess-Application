@@ -15,22 +15,32 @@ where
 	(wid ,world1 ) = openId world
 	
 	/*________ Sprites Loading Area_______________*/
-	(wq_sprite, world2) = LoadPicture "white_queen.cimg" world1						//white_queen
+	(wq_sprite, world2) = LoadPicture "../res/Queen_White.cimg" world1		//white_queen
+	(bq_sprite, world3) = LoadPicture "../res/Queen_Black.cimg" world2              //black_queen
 	
-	(bishop_w_sprite, world3) = LoadPicture "../res/Bishop_White.cimg" world2		//bishop_white
-	(bishop_b_sprite, world4) = LoadPicture "../res/Bishop_Black.cimg" world3		//bishop_black
+	(wking_sprite, world4) = LoadPicture "../res/King_White.cimg" world3			//white_king
+	(bking_sprite, world5) = LoadPicture "../res/King_Black.cimg" world4			//black_king
 	
-	(pawn_w_sprite, world5) = LoadPicture "../res/Pawn_White.cimg" world4 			//pawn_white
-	(pawn_b_sprite, world6) = LoadPicture "../res/Pawn_Black.cimg" world5			//pawn_black
+	(bishop_w_sprite, world6) = LoadPicture "../res/Bishop_White.cimg" world5		//bishop_white
+	(bishop_b_sprite, world7) = LoadPicture "../res/Bishop_Black.cimg" world6		//bishop_black
 	
-	(knight_w_sprite, world7) = LoadPicture "../res/Knight_White.cimg" world6 		//knight_white
-	(knight_b_sprite, world8) = LoadPicture "../res/Knight_Black.cimg" world7		//knight_black
+	(pawn_w_sprite, world8) = LoadPicture "../res/Pawn_White.cimg" world7 			//pawn_white
+	(pawn_b_sprite, world9) = LoadPicture "../res/Pawn_Black.cimg" world8			//pawn_black
 	
-	(rook_w_sprite, world9) = LoadPicture "../res/Rook_White.cimg" world8 			//rook_white
-	(rook_b_sprite, worldFinal) = LoadPicture "../res/Rook_Black.cimg" world9		//rook_black
+	(knight_w_sprite, world10) = LoadPicture "../res/Knight_White2.cimg" world9 		//knight_white
+	(knight_b_sprite, world11) = LoadPicture "../res/Knight_Black2.cimg" world10		//knight_black
+	
+	(rook_w_sprite, world0) = LoadPicture "../res/Rook_White.cimg" world11 			//rook_white
+	(rook_b_sprite, worldFinal) = LoadPicture "../res/Rook_Black.cimg" world0		//rook_black
+	
 	
 	/*_____________Loading pieces Area________________*/ 
+	       		 /*queen*/
 	wq_piece = { xCord = 4, yCord = 7,  player = WhitePiece, type = Queen, sprite = wq_sprite} 
+	bq_piece = { xCord = 4, yCord = 0,  player = BlackPiece, type = Queen, sprite = bq_sprite} 
+	        	 /*king*/
+	wking_piece = { xCord = 3, yCord = 7, player = WhitePiece, type = King, sprite = wking_sprite}
+	bking_piece = { xCord = 3, yCord = 0, player = BlackPiece, type = King, sprite = bking_sprite}
 			/*left piece of the bishop*/
 	bishop_w_piece = { xCord = 2, yCord = 7,  player = WhitePiece, type = Bishop, sprite = bishop_w_sprite} 
 	bishop_b_piece = { xCord = 2, yCord = 0,  player = BlackPiece, type = Bishop, sprite = bishop_b_sprite} 
@@ -45,11 +55,11 @@ where
 	rook_b_piece = { xCord = 0, yCord = 0,  player = BlackPiece, type = Rook, sprite = rook_b_sprite} 
 	
 	/*Initial board creation*/
-	initBoard = [Just rook_b_piece, Just knight_b_piece, Just bishop_b_piece, Nothing, Nothing, Just {bishop_b_piece & xCord = 5}, Just {knight_b_piece & xCord = 6}, Just {rook_b_piece & xCord = 7}] ++  	// black Main pieces area 
+	initBoard = [Just rook_b_piece, Just knight_b_piece, Just bishop_b_piece, Just bking_piece, Just bq_piece, Just {bishop_b_piece & xCord = 5}, Just {knight_b_piece & xCord = 6}, Just {rook_b_piece & xCord = 7}] ++  	// black Main pieces area 
 				[Just { pawn_b_piece & xCord = x }  \\ x <- [0..7]] ++	// black pawns
 				[Nothing \\ s <- [0..7], y <- [1..4]] ++ 				 //middle empty area.
 				[Just { pawn_w_piece & xCord = x}  \\ x <- [0..7]] ++	// white pawns
-				[Just rook_w_piece, Just knight_w_piece, Just bishop_w_piece, Nothing, Just wq_piece, Just {bishop_w_piece & xCord = 5}, Just {knight_w_piece & xCord = 6}, Just {rook_w_piece & xCord = 7}] 	// white Main pieces area
+				[Just rook_w_piece, Just knight_w_piece, Just bishop_w_piece, Just wking_piece, Just wq_piece, Just {bishop_w_piece & xCord = 5}, Just {knight_w_piece & xCord = 6}, Just {rook_w_piece & xCord = 7}] 	// white Main pieces area
 				
 	// main board, with 8*8 tile of pieces or nothing.
 	board :: !Board
