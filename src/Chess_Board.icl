@@ -27,8 +27,8 @@ where
 	(pawn_w_sprite, world8) = LoadPicture "../res/Pawn_White.cimg" world7 			//pawn_white
 	(pawn_b_sprite, world9) = LoadPicture "../res/Pawn_Black.cimg" world8			//pawn_black
 	
-	(knight_w_sprite, world10) = LoadPicture "../res/Knight_White2.cimg" world9 		//knight_white
-	(knight_b_sprite, world11) = LoadPicture "../res/Knight_Black2.cimg" world10		//knight_black
+	(knight_w_sprite, world10) = LoadPicture "../res/Knight_White.cimg" world9 		//knight_white
+	(knight_b_sprite, world11) = LoadPicture "../res/Knight_Black.cimg" world10		//knight_black
 	
 	(rook_w_sprite, world12) = LoadPicture "../res/Rook_White.cimg" world11 		//rook_white
 	(rook_b_sprite, worldFinal) = LoadPicture "../res/Rook_Black.cimg" world12		//rook_black
