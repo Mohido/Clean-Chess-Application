@@ -15,8 +15,8 @@ where
 	(wid ,world1 ) = openId world
 	
 	/*________ Sprites Loading Area_______________*/
-	(wq_sprite, world2) = LoadPicture "../res/Queen_White.cimg" world1		//white_queen
-	(bq_sprite, world3) = LoadPicture "../res/Queen_Black.cimg" world2              //black_queen
+	(wq_sprite, world2) = LoadPicture "../res/Queen_White.cimg" world1			//white_queen
+	(bq_sprite, world3) = LoadPicture "../res/Queen_Black.cimg" world2              	//black_queen
 	
 	(wking_sprite, world4) = LoadPicture "../res/King_White.cimg" world3			//white_king
 	(bking_sprite, world5) = LoadPicture "../res/King_Black.cimg" world4			//black_king
@@ -30,8 +30,8 @@ where
 	(knight_w_sprite, world10) = LoadPicture "../res/Knight_White2.cimg" world9 		//knight_white
 	(knight_b_sprite, world11) = LoadPicture "../res/Knight_Black2.cimg" world10		//knight_black
 	
-	(rook_w_sprite, world0) = LoadPicture "../res/Rook_White.cimg" world11 			//rook_white
-	(rook_b_sprite, worldFinal) = LoadPicture "../res/Rook_Black.cimg" world0		//rook_black
+	(rook_w_sprite, world12) = LoadPicture "../res/Rook_White.cimg" world11 		//rook_white
+	(rook_b_sprite, worldFinal) = LoadPicture "../res/Rook_Black.cimg" world12		//rook_black
 	
 	
 	/*_____________Loading pieces Area________________*/ 
