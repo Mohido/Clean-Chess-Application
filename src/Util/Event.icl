@@ -1,6 +1,6 @@
 implementation module Util.Event
 
-import StdEnv, StdIO, StdDebug, Util.Constants
+import StdEnv, StdIO, StdDebug, Util.Constants Util.RookMoves
 
 
 ///____________ Mouse Handling events functions_____________
@@ -19,6 +19,7 @@ where
 	piece = gs.worldMatrix.[xCord  + yCord * 8]			/// getting piece at that index
 	newGS = {gs & selectedPiece = piece}				/// new game-state
 	newPST = {pst & ls=newGS}							/// updating process state with new GameState
+	finalPst = showValidMoves newPST					/// updating process state with the new highlighting
 	
 	/*
 	* for testing.. comment it once you are done testing
