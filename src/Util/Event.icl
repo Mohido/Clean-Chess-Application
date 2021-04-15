@@ -1,6 +1,6 @@
 implementation module Util.Event
 
-import StdEnv, StdIO, StdDebug, Util.Constants Util.RookMoves
+import StdEnv, StdIO, StdDebug, Util.Constants, Util.Rendering ,Util.RookMoves
 
 
 ///____________ Mouse Handling events functions_____________
@@ -12,7 +12,7 @@ mouseHandler (MouseDown hitPoint _ _) (nil, pst=:{ls=gs}) = = trace_n ( toString
 */
 
 mouseHandler :: MouseState (.ls, *PSt GameState) -> (.ls,*PSt GameState)
-mouseHandler (MouseDown hitPoint _ _) (nil, pst=:{ls=gs}) = (nil, newPST)
+mouseHandler (MouseDown hitPoint _ _) (nil, pst=:{ls=gs}) = (nil, finalPst)
 where
 	xCord = (hitPoint.x / TILE_SIZE)					/// pixel to tile coords system
 	yCord = (hitPoint.y / TILE_SIZE)					/// pixel to tile coords system

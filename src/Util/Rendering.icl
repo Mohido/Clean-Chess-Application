@@ -1,6 +1,6 @@
 implementation module Util.Rendering
 
-import StdEnv, StdIO, Util.Constants, Util.CostumFunctions
+import StdEnv, StdIO, Util.Constants, Util.CostumFunctions, Util.RookMoves
 
 /*Main Highlighting Function*/
 

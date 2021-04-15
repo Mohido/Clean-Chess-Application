@@ -1,5 +1,10 @@
 definition module Util.Rendering
+
 import StdIO, StdEnv, Util.Constants, Util.CostumFunctions
+
+
+/*___Main Highlighting Function___*/
+showValidMoves :: (*PSt GameState) ->(*PSt GameState)
 
 
 /**

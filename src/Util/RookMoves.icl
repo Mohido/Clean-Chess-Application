@@ -1,4 +1,6 @@
 implementation module Util.RookMoves
+import StdEnv, StdIO, Util.Constants, StdFunc
+
 
 highliteRook :: (*PSt GameState) !Piece -> (*PSt GameState)
 highliteRook pst=:{ls, io} p = seq [goLeftRook (xC-1) yC p, goRightRook (xC+1) yC p, goForwardRook xC (yC+1) p, goBackwardRook xC (yC-1) p] newPst
