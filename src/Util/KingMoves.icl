@@ -6,7 +6,7 @@ import StdEnv, StdIO, Util.Constants, StdFunc
 
 
 HighlightKing :: (*PSt GameState) !Piece -> (*PSt GameState)
-HighlightKing pst=:{ls, io} p = seq [KingValidMoves (xC-1) yC p, KingValidMoves (xC+1) yC p,  KingValidMoves xC (yC+1) p, KingValidMoves xC (yC-1) p, KingSideCastle (xC-1) yC p, QueenSideCastle (xC+1) yC p] newPst
+HighlightKing pst=:{ls, io} p = seq [KingValidMoves (xC-1) yC p, KingValidMoves (xC+1) yC p,  KingValidMoves xC (yC+1) p, KingValidMoves xC (yC-1) p, KingValidMoves (xC+1) (yC+1) p,KingValidMoves (xC+1) (yC-1) p,KingValidMoves (xC-1) (yC+1) p,KingValidMoves (xC-1) (yC-1) p, KingSideCastle (xC-1) yC p, QueenSideCastle (xC +1) yC p] newPst
 where
 	xC 	   = (p.xCord) 
 	yC 	   = (p.yCord) 
@@ -15,11 +15,11 @@ where
 
 
 
-/***************************************************************************************************************/
+//***************************************************************************************************************
 //NOTE: Following conditoin must be included in the first guard in order to complete the highlight feature; 
 // (CheckMate)
 // left for the end of the game logic implementation
-/***************************************************************************************************************/
+//***************************************************************************************************************
 
 KingValidMoves :: Int Int !Piece (*PSt GameState) -> (*PSt GameState)
 KingValidMoves xCoordinate yCoordinate clickedPiece pst=:{ls, io} 
@@ -35,12 +35,12 @@ where
 
 
   
-/***************************************************************************************************************/
+//***************************************************************************************************************
 //NOTE: Following conditoins must be included in the first guard in order to complete the highlight feature; 
 // (King has Changed it's positon and comes back to its original postion) OR (Opponent's Check) OR (CheckMate)
 // The tiles must not be highligted if either of the above conditions are true
 // left for the end of the game logic implementation; Same goes for the queen side castling
-/***************************************************************************************************************/
+//***************************************************************************************************************
 
 kingSideCastleAux :: Int Int (*PSt GameState) -> (*PSt GameState)
 kingSideCastleAux xC yC pst=:{ls, io} 
