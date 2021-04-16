@@ -17,6 +17,8 @@ HighlightKing :: (*PSt GameState) !Piece -> (*PSt GameState)
 //and for forward-right : (xC+1, yC+1), forward-left: (xC-1, yC+1), backward-left: (xC-1, xC-1), backward-right: (xC+l, xC-1)
 //- where xC and yC are the x and y coordinates of the clicked tile 
 //*************************************************************************************
+
+
 KingValidMoves :: Int Int !Piece (*PSt GameState) -> (*PSt GameState)
 
 //Check (and highlight) whether the king can castle King side
