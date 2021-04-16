@@ -1,9 +1,9 @@
-definition module Util.RookMoves
-import StdEnv, StdIO, StdDebug, Util.Constants, StdFunc
+definition module Util.HighLighting.RookMoves
+import StdEnv, StdIO, StdDebug, Util.Constants
 
 
 //* The mother function.
-highliteRook :: (*PSt GameState) !Piece -> (*PSt GameState)
+highLightRook :: (*PSt GameState) !Piece -> (*PSt GameState)
 
 //----Highlighting the pieces that are left of our selected piece 
 goLeftRook :: Int Int !Piece (*PSt GameState) -> (*PSt GameState)
