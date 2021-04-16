@@ -37,7 +37,7 @@ where
 //one-back-ward-one-to-the-right
 BackWardMovesAlongMainDiagonal :: Int Int !Piece (*PSt GameState) -> (*PSt GameState)
 BackWardMovesAlongMainDiagonal xC yC p pst=:{ls, io}
-| xC > 7 || yC < 0 = pst || 
+| xC > 7 || yC < 0 = pst
 = case ls.worldMatrix.[xC + yC * 8] of 
 	Nothing = BackWardMovesAlongMainDiagonal (xC+1) (yC-1) p {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io}  
 	Just piece = case (piece.player == p.player) of 
