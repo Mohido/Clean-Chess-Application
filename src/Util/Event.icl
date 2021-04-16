@@ -1,16 +1,47 @@
 implementation module Util.Event
 
-import StdEnv, StdIO, StdDebug, Util.Constants
+import StdEnv, StdIO, StdDebug, Util.Constants, Util.Rendering
 
 
 ///____________ Mouse Handling events functions_____________
-		
-handlingMouseEvent :: MouseState (.ls, *PSt .l) -> (.ls,*PSt .l)
-handlingMouseEvent (MouseDown hitPoint _ _) pst	
-# msg = ("clicked tile: (" +++ toString (hitPoint.x / TILE_SIZE) +++ ", " +++ toString (hitPoint.y / TILE_SIZE) +++ ")")
-=  trace_n msg pst
-handlingMouseEvent _ pst =  pst
 
+
+/* 
+* testing:- 
+mouseHandler (MouseDown hitPoint _ _) (nil, pst=:{ls=gs}) = = trace_n ( toString xCord +++ " " +++ toString yCord  +++ " ." +++ printingPiece gs.selectedPiece) (nil, newPST)
+*/						
+mouseHandler :: MouseState (.ls, *PSt GameState) -> (.ls,*PSt GameState)
+mouseHandler (MouseDown hitPoint _ _) (nil, pst=:{ls=gs}) = (nil, finalPst)
+where
+	xCord = (hitPoint.x / TILE_SIZE)					/// pixel to tile coords system
+	yCord = (hitPoint.y / TILE_SIZE)					/// pixel to tile coords system
+	piece = gs.worldMatrix.[xCord  + yCord * 8]			/// getting piece at that index
+	newGS = {gs & selectedPiece = piece}				/// new game-state
+	newPST = {pst & ls=newGS}							/// updating process state with new GameState
+	finalPst = showValidMoves newPST					/// updating process state with the new highlighting
+	/*
+	* for testing.. comment it once you are done testing
+	*
+	printingPiece :: (Maybe Piece) -> String
+	printingPiece Nothing = "Nothing"
+	printingPiece (Just p)
+	| p.type == Pawn && p.player == WhitePiece = "whitePawn"
+	| p.type == Pawn && p.player == BlackPiece = "blackPawn"
+	| p.type == Bishop && p.player == WhitePiece = "whitebishop"
+	| p.type == Bishop && p.player == BlackPiece = "blackbishop"
+	= toString p.xCord +++ " " +++ toString p.yCord
+	*/
+mouseHandler _ pst =  pst
+
+	
+
+
+
+
+
+m_filter :: MouseState -> Bool
+m_filter (MouseMove _ _ ) = False
+m_filter _ = True
 
 ///____________ Other Window Handling events functions_____________
 quit:: (.ls, *PSt .l) -> (.ls, *PSt .l)
