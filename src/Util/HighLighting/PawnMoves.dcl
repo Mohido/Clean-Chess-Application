@@ -9,7 +9,7 @@ from StdFunc import seq
 highLightPawn :: (*PSt GameState) !Piece -> (*PSt GameState)
 
 /*One big function to manage moving forward for both white and black pawn pieces.*/
-moveForwardPawn :: Int Int Int !Piece (*PSt GameState)-> (*PSt GameState)
+moveForwardPawn :: Int Int !Piece (*PSt GameState)-> (*PSt GameState)
 
 moveForwardPawnAux_b :: Int Int !Piece (*PSt GameState)-> (*PSt GameState)
 
