@@ -1,6 +1,6 @@
 implementation module Util.Rendering
 
-import StdEnv, StdIO, Util.Constants, Util.CostumFunctions, Util.RookMoves
+import StdEnv, StdIO, Util.Constants, Util.CostumFunctions, Util.Highlights
 
 /*Main Highlighting Function*/
 
@@ -8,13 +8,13 @@ showValidMoves :: (*PSt GameState) ->(*PSt GameState)
 showValidMoves pst=:{ls, io} =
 					case ls.selectedPiece of
 					Nothing = pst
-					Just p = /*case p.type of
-								 Rook   = */(highliteRook pst p)   //Have to impelment the other pieces, comment what is necessary to test.
-								//  Bishop =
-								//  Pawn   = 
-								//  Knight =
-								//  Queen  =
-								//  King   = 
+					Just p = case p.type of
+								 Rook   = highLightRook pst p 
+								 Bishop = HighlightBishop pst p
+								 Pawn   = highLightPawn pst p
+								 Knight = highLightPawn pst p
+								 Queen  = HighlightQueen pst p
+								 King   = HighlightKing pst p
 								
 								
 /*________Rendering Function_____*/
