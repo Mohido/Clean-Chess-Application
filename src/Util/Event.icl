@@ -12,14 +12,15 @@ mouseHandler (MouseDown hitPoint _ _) (nil, pst=:{ls=gs}) = = trace_n ( toString
 */
 
 mouseHandler :: MouseState (.ls, *PSt GameState) -> (.ls,*PSt GameState)
-mouseHandler (MouseDown hitPoint _ _) (nil, pst=:{ls=gs}) = (nil, finalPst)
+mouseHandler (MouseDown hitPoint _ _) (nil, pst=:{ls=gs, io}) = (nil, finalPst)
 where
 	xCord = (hitPoint.x / TILE_SIZE)					/// pixel to tile coords system
 	yCord = (hitPoint.y / TILE_SIZE)					/// pixel to tile coords system
+	deHighlight = showValidMoves pst					/// This is probably not the best way to do it but it looks cool so far
 	piece = gs.worldMatrix.[xCord  + yCord * 8]			/// getting piece at that index
 	newGS = {gs & selectedPiece = piece}				/// new game-state
-	newPST = {pst & ls=newGS}							/// updating process state with new GameState
-	finalPst = showValidMoves newPST					/// updating process state with the new highlighting
+	newPST = {deHighlight & ls=newGS}					/// updating process state with new GameState
+	finalPst = showValidMoves newPST					/// The last pst to be processed 
 	
 	/*
 	* for testing.. comment it once you are done testing

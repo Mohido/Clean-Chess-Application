@@ -12,7 +12,7 @@ showValidMoves pst=:{ls, io} =
 								 Rook   = highLightRook pst p 
 								 Bishop = HighlightBishop pst p
 								 Pawn   = highLightPawn pst p
-								 Knight = highLightPawn pst p
+								 Knight = HighlightKnight pst p
 								 Queen  = HighlightQueen pst p
 								 King   = HighlightKing pst p
 								
