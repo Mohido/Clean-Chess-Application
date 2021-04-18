@@ -1,6 +1,6 @@
 implementation module Util.Event
 
-import StdEnv, StdIO, StdDebug, Util.Constants, Util.Rendering
+import StdEnv, StdIO, StdDebug, Util.Constants, Util.Rendering, Util.CostumFunctions
 
 
 ///____________ Mouse Handling events functions_____________
@@ -18,7 +18,7 @@ where
 	yCord = (hitPoint.y / TILE_SIZE)					/// pixel to tile coords system
 	piece = gs.worldMatrix.[xCord  + yCord * 8]			/// getting piece at that index
 	newGS = {gs & selectedPiece = piece}				/// new game-state
-	newPST = {pst & ls=newGS}						/// updating process state with new GameState
+	newPST = {pst & ls=newGS}						    /// updating process state with new GameState
 	finalPst = showValidMoves newPST					/// The last pst to be processed 
 		
 	/*
@@ -35,49 +35,17 @@ where
 	*/
 	
 mouseHandler (MouseUp hitPoint _) (nil, pst=:{ls=gs, io}) 
-# msg = ("clicked tile: (" +++ toString (hitPoint.x / TILE_SIZE) +++ ", " +++ toString (xC / TILE_SIZE) +++ ")" +++ " The Piece is: " ) 
+# msg = ("clicked tile: (" +++ toString (hitPoint.x / TILE_SIZE) +++ ", " +++ toString (mouseUpxCord / TILE_SIZE) +++ ")" +++ " The Piece is: " ) 
 = (trace_n msg (nil, finalPst))
 where
-	(xC,yC) = case gs.selectedPiece of
-			Nothing = (0,0)
-			Just p = (p.xCord,p.yCord)
-	xCord = (hitPoint.x / TILE_SIZE)					/// pixel to tile coords system
-	yCord = (hitPoint.y / TILE_SIZE)					/// pixel to tile coords system
-	deHighlight = showValidMoves pst
-	piece = gs.selectedPiece							/// getting piece at that index
-	drawPiece = MovePieceFunc xCord yCord piece deHighlight
-	drawnPst = case gs.selectedPiece of
-			Nothing = drawPiece
-			Just p = fillFunc p.xCord p.yCord drawPiece
-	newGST = case gs.selectedPiece of
-			Nothing = gs
-			Just p = updateGST (xCord, yCord) (xC + yC * 8) piece gs
-	finalPst = {drawnPst & ls=newGST}
+	mouseUpxCord = (hitPoint.x / TILE_SIZE)					/// pixel to tile coords system
+	mouseUpyCord = (hitPoint.y / TILE_SIZE)					/// pixel to tile coords system
+	deHighlight  = showValidMoves pst						/// Dehighlight when the mouse goes up
+	finalPst = (\x | x = (UpdateGST mouseUpxCord mouseUpyCord deHighlight) |otherwise = deHighlight) (isJust gs.selectedPiece)
 
+mouseHandler _ pst =  pst
 
-mouseHandler _ pst =  pst	
-
-
-MovePieceFunc :: Int Int !(Maybe Piece) (*PSt GameState) -> (*PSt GameState)
-MovePieceFunc xC yC p pst=:{ls, io} = {pst & io = appWindowPicture (ls.windowId) (renderPieceAt xC yC p) io}
-
-fillFunc :: Int Int (*PSt GameState) -> (*PSt GameState)
-fillFunc xC yC pst=:{ls, io} = {pst & io = appWindowPicture (ls.windowId) (fillBoardAt xC yC) io}
-
-updateGST :: (Int,Int) Int !(Maybe Piece) GameState -> GameState
-updateGST (move,to) org m gs = switched
-where
-	s = updatePiece move to m 
-	moveTo = move + to * 8
-	movedPiece = {gs & worldMatrix = {(\x |x == moveTo = s = a) i \\ a<-:gs.worldMatrix & i<-[0..] }}
-	switched = {movedPiece & worldMatrix = {(\x |x == org = Nothing = a) i \\ a<-:movedPiece.worldMatrix & i<-[0..] }}
 	
-updatePiece :: Int Int !(Maybe Piece) -> !(Maybe Piece)
-updatePiece xC yC Nothing = Nothing
-updatePiece xC yC (Just p) = Just {p & xCord = xC , yCord = yC}
-
-
-
 m_filter :: MouseState -> Bool
 m_filter (MouseMove _ _ ) = False
 m_filter _ = True

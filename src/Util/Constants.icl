@@ -13,7 +13,7 @@ where
 	(==) King King = True
 	(==) _ _ = False
 	
-	
+
 instance == PieceColour
 where 
 	(==) BlackPiece BlackPiece = True
