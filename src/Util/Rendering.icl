@@ -60,8 +60,19 @@ where
 	fillTile :: !Point2 -> *Picture -> *Picture
 	fillTile pix_cord = fillAt pix_cord tile
 
-
-/**
+fillBoardAt :: Int Int *Picture -> *Picture
+fillBoardAt xC yC pic 
+|(xC rem 2 == 0 && yC rem 2 == 0) || (xC rem 2 <>  0 && yC rem 2 <> 0) = DrawColour xC yC pic
+= DrawWhite xC yC pic
+where
+	DrawColour xC yC pic
+	#ourColour = RGB{r =130, g=63, b=59}
+	# pic = setPenColour ourColour pic
+	= fillAt {x= xC*TILE_SIZE, y= yC*TILE_SIZE} tile pic
+	DrawWhite xC yC pic
+	# pic = setPenColour White pic
+	= fillAt {x= xC*TILE_SIZE, y= yC*TILE_SIZE} tile pic
+/**	
 * fill the board with pieces.
 */
 fillPieces :: !Board *Picture -> *Picture
@@ -105,6 +116,15 @@ getPixelValue (x,y) piece
 # index =  (x/xRatio) + (y/yRatio) * piece.tileWidth
 | index >= size piece.arrayOfPixels = {r=0, g=0, b=0}
 = piece.arrayOfPixels.[index]
+
+renderPieceAt :: Int Int !(Maybe Piece) *Picture -> *Picture
+renderPieceAt _ _ Nothing pic = pic
+renderPieceAt xC yC (Just piece) pic = foldr fillPixel pic pixelsValues
+where
+	 pixelsValues = [ (y + xC * TILE_SIZE, x + TILE_SIZE * yC, getPixelValue (x, y) piece.sprite) 
+	 					\\  x <- [0..TILE_SIZE] ,y <- [0..TILE_SIZE] 
+	 					|	not (getPixelValue (x, y) piece.sprite == {r=255,g=0,b=255})]
+	 					
 
 
 

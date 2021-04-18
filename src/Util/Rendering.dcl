@@ -25,6 +25,7 @@ clear :: Colour *Picture -> *Picture
 fillBoard :: Colour *Picture -> *Picture
 
 
+fillBoardAt :: Int Int *Picture -> *Picture
 /**
 * fill the board with pieces.
 */
@@ -44,6 +45,7 @@ renderPiece :: !(Maybe Piece) *Picture -> *Picture
 getPixelValue ::  (!Int, !Int) !PiecePicture -> RGBColour
 
 
+renderPieceAt :: Int Int !(Maybe Piece) *Picture -> *Picture
 
 
 
