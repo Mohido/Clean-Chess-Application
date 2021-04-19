@@ -12,7 +12,9 @@ mouseHandler (MouseDown hitPoint _ _) (nil, pst=:{ls=gs}) = = trace_n ( toString
 */
 
 mouseHandler :: MouseState (.ls, *PSt GameState) -> (.ls,*PSt GameState)
-mouseHandler (MouseDown hitPoint _ _) (nil, pst=:{ls=gs, io}) = (nil, finalPst)
+mouseHandler (MouseDown hitPoint _ _) (nil, pst=:{ls=gs, io}) 
+| hitPoint.x > TILE_SIZE*TILE_SIZE || hitPoint.y > TILE_SIZE*TILE_SIZE = (nil, pst)  //// if the mouseDown event happens out of the picture Context
+= (nil, finalPst)
 where
 	xCord = (hitPoint.x / TILE_SIZE)					/// pixel to tile coords system
 	yCord = (hitPoint.y / TILE_SIZE)					/// pixel to tile coords system
@@ -35,18 +37,19 @@ where
 	*/
 	
 mouseHandler (MouseUp hitPoint _) (nil, pst=:{ls=gs, io}) 
-| gs.validMoves.[mouseUpxCord + mouseUpyCord * 8] =  (nil, doStuff mouseUpxCord mouseUpyCord pst )
-= (nil, showValidMoves pst)
-//= (trace_n msg (nil, finalPst))
+| hitPoint.x > TILE_SIZE*TILE_SIZE || hitPoint.y > TILE_SIZE*TILE_SIZE = (nil, deHighlight) // if the mouseUp event happens out of the picture Context
+| gs.validMoves.[mouseUpxCord + mouseUpyCord * 8] =  (nil, movePiece mouseUpxCord mouseUpyCord deHighlight ) //if a move is valid, update
+= (nil, deHighlight)
 where
 	mouseUpxCord = (hitPoint.x / TILE_SIZE)					/// pixel to tile coords system
 	mouseUpyCord = (hitPoint.y / TILE_SIZE)					/// pixel to tile coords system
-	//deHighlight  = showValidMoves pst						/// Dehighlight when the mouse goes up
+	deHighlight  = showValidMoves pst						/// Dehighlight when the mouse goes up
 	
 mouseHandler _ pst =  pst
 
-doStuff :: Int Int (*PSt GameState) -> (*PSt GameState)
-doStuff mouseUpxCord mouseUpyCord pst=:{ls=gs, io} = finalPst
+///*This function is just to avoid the uniqueness error that occurs when using the pst for more than one thing at a time*/
+movePiece :: Int Int (*PSt GameState) -> (*PSt GameState)
+movePiece mouseUpxCord mouseUpyCord pst=:{ls=gs, io} = finalPst
 where
 	finalPst 	 = (\x | x = (UpdateGST mouseUpxCord mouseUpyCord pst) |otherwise = pst) (isJust gs.selectedPiece)
 

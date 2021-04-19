@@ -23,7 +23,8 @@ tile :== {box_w = TILE_SIZE, box_h = TILE_SIZE}
 instance == ChessType
 
 initMoves :: {#Bool}
-	
+updateBool:: Int {#Bool} -> {#Bool}
+
 ::PieceColour = BlackPiece | WhitePiece | ColourError
 
 instance == PieceColour
