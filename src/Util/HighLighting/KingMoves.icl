@@ -25,9 +25,9 @@ KingValidMoves :: Int Int !Piece (*PSt GameState) -> (*PSt GameState)
 KingValidMoves xCoordinate yCoordinate clickedPiece pst=:{ls, io} 
 | xCoordinate < 0 || xCoordinate > 7 || yCoordinate < 0 || yCoordinate > 7 = pst 
 = case ls.worldMatrix.[xCoordinate + yCoordinate * 8] of 
-	Nothing = {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io}  
+	Nothing = {pst & io = appWindowPicture (ls.windowId) ((hiliteAt point tile)) io , ls = {ls & validMoves = updateBool (xCoordinate + yCoordinate * 8) ls.validMoves}}  
 	Just piece = case (piece.player == clickedPiece.player) of
-					False = {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io}
+					False = {pst & io = appWindowPicture (ls.windowId) ((hiliteAt point tile)) io , ls = {ls & validMoves = updateBool (xCoordinate + yCoordinate * 8) ls.validMoves}}
 					True = pst
 where
 	point = {x = xCoordinate * TILE_SIZE , y = yCoordinate * TILE_SIZE} 
@@ -45,7 +45,7 @@ where
 kingSideCastleAux :: Int Int (*PSt GameState) -> (*PSt GameState)
 kingSideCastleAux xC yC pst=:{ls, io} 
 | xC <= 0 = pst 
-= kingSideCastleAux (xC - 1) yC {pst & io = appWindowPicture (ls.windowId) (hiliteAt {x = xC * TILE_SIZE , y = yC * TILE_SIZE} tile) io}
+= kingSideCastleAux (xC - 1) yC {pst & io = appWindowPicture (ls.windowId) (hiliteAt {x = xC * TILE_SIZE , y = yC * TILE_SIZE} tile) io, ls = {ls & validMoves = updateBool (xC + yC * 8) ls.validMoves}}
 
 
 KingSideCastle :: Int Int !Piece (*PSt GameState) -> (*PSt GameState)
@@ -69,7 +69,7 @@ KingSideCastle xCoordinate yCoordinate clickedPiece pst=:{ls, io}
 QueenSideCastleAux :: Int Int (*PSt GameState) -> (*PSt GameState)
 QueenSideCastleAux xC yC pst=:{ls, io}
 | xC >= 7 = pst 
-= QueenSideCastleAux (xC - 1) yC {pst & io = appWindowPicture (ls.windowId) (hiliteAt {x = xC * TILE_SIZE , y = yC * TILE_SIZE} tile) io}
+= QueenSideCastleAux (xC - 1) yC {pst & io = appWindowPicture (ls.windowId) (hiliteAt {x = xC * TILE_SIZE , y = yC * TILE_SIZE} tile) io, ls = {ls & validMoves = updateBool (xC + yC * 8) ls.validMoves}}
 
 QueenSideCastle :: Int Int !Piece (*PSt GameState) -> (*PSt GameState)
 QueenSideCastle xCoordinate yCoordinate clickedPiece pst=:{ls, io}

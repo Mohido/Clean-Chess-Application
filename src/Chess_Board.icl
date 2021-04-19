@@ -8,7 +8,7 @@ import Util.Reading, Util.Event, Util.Constants, Util.CostumFunctions, Util.Rend
 //Start Function and Initializing game assets
 Start:: *World -> *World
 Start world 
-# gs = {worldMatrix = board, selectedPiece = Nothing, windowId = wid}  		///initial game state (process state)
+# gs = {worldMatrix = board, selectedPiece = Nothing, windowId = wid, validMoves = initMoves}  		///initial game state (process state)
 = startIO SDI gs (initIO (wid, board) ) [ProcessClose closeProcess] worldFinal
 where
 	/*_______ world function + reading sprites________*/
