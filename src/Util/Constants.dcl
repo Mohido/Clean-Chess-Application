@@ -44,14 +44,18 @@ instance == RGBColour
 	sprite:: PiecePicture
 	}
 
+:: Players = PlayerOne | PlayerTwo
 
+:: Player = {player1 :: Bool, player2 :: Bool}
 
 :: Board :== {!(Maybe Piece)}
 
-
+instance == Players
 ::GameState = {
-		worldMatrix :: !Board ,
-		selectedPiece :: Maybe Piece,
-		windowId :: !Id,
-		validMoves :: {#Bool}
+		turn			 :: Player,
+		worldMatrix      :: !Board ,
+		selectedPiece	 :: Maybe Piece,
+		windowId 		 :: !Id,
+		validMoves 		 :: {#Bool},
+		isTherehilite	 :: Bool
 	}

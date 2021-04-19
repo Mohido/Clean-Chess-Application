@@ -14,6 +14,13 @@ initMoves = {False,False,False,False,False,False,False,False,
 updateBool:: Int {#Bool} -> {#Bool}
 updateBool int p = {(\x |x == int = (not a) = a) b \\ a<-:p & b<-[0..]}
 
+
+instance == Players
+where
+	(==) PlayerOne PlayerOne = True
+	(==) PlayerTwo PlayerTwo = True
+	(==) _ _ = False
+
 instance == ChessType
 where
 	(==) Rook Rook = True

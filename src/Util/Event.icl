@@ -14,14 +14,16 @@ mouseHandler (MouseDown hitPoint _ _) (nil, pst=:{ls=gs}) = = trace_n ( toString
 mouseHandler :: MouseState (.ls, *PSt GameState) -> (.ls,*PSt GameState)
 mouseHandler (MouseDown hitPoint _ _) (nil, pst=:{ls=gs, io}) 
 | hitPoint.x > TILE_SIZE*TILE_SIZE || hitPoint.y > TILE_SIZE*TILE_SIZE = (nil, pst)  //// if the mouseDown event happens out of the picture Context
-= (nil, finalPst)
+|(isJust piece) = if (((fromJust piece).player == WhitePiece) && gs.turn.player1) (nil, finalPst) (if (((fromJust piece).player == BlackPiece) && gs.turn.player2) (nil,finalPst) (nil,pst))
+= (nil, pst)
 where
 	xCord = (hitPoint.x / TILE_SIZE)					/// pixel to tile coords system
 	yCord = (hitPoint.y / TILE_SIZE)					/// pixel to tile coords system
 	piece = gs.worldMatrix.[xCord  + yCord * 8]			/// getting piece at that index
 	newGS = {gs & selectedPiece = piece}				/// new game-state
 	newPST = {pst & ls=newGS}						    /// updating process state with new GameState
-	finalPst = showValidMoves newPST					/// The last pst to be processed 
+	hilightedPst = showValidMoves newPST				/// The last pst to be processed 
+	finalPst = {hilightedPst & ls.isTherehilite = True}
 		
 	/*
 	* for testing.. comment it once you are done testing
@@ -37,16 +39,21 @@ where
 	*/
 	
 mouseHandler (MouseUp hitPoint _) (nil, pst=:{ls=gs, io}) 
+|(not gs.isTherehilite) = (nil,pst)
 | hitPoint.x > TILE_SIZE*TILE_SIZE || hitPoint.y > TILE_SIZE*TILE_SIZE = (nil, deHighlight) // if the mouseUp event happens out of the picture Context
-| gs.validMoves.[mouseUpxCord + mouseUpyCord * 8] =  (nil, movePiece mouseUpxCord mouseUpyCord deHighlight ) //if a move is valid, update
+| gs.validMoves.[mouseUpxCord + mouseUpyCord * 8] =  (nil, changedTurns) //if a move is valid, update
 = (nil, deHighlight)
 where
 	mouseUpxCord = (hitPoint.x / TILE_SIZE)					/// pixel to tile coords system
 	mouseUpyCord = (hitPoint.y / TILE_SIZE)					/// pixel to tile coords system
-	deHighlight  = showValidMoves pst						/// Dehighlight when the mouse goes up
+	deHighlight  = {(showValidMoves pst) & ls.isTherehilite = False} /// Dehighlight when the mouse goes up
+	editedPst	 = movePiece mouseUpxCord mouseUpyCord deHighlight
+	changedTurns = {editedPst & ls = {editedPst.ls & turn =(updatetwoBool editedPst.ls.turn)}}
 	
 mouseHandler _ pst =  pst
 
+updatetwoBool :: Player -> Player
+updatetwoBool p = {player1 = (not p.player1), player2 = (not p.player2)}
 ///*This function is just to avoid the uniqueness error that occurs when using the pst for more than one thing at a time*/
 movePiece :: Int Int (*PSt GameState) -> (*PSt GameState)
 movePiece mouseUpxCord mouseUpyCord pst=:{ls=gs, io} = finalPst
