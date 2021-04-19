@@ -36,11 +36,11 @@ where
 	
 	/*_____________Loading pieces Area________________*/ 
 	       		 /*queen*/
-	wq_piece = { xCord = 4, yCord = 7,  player = WhitePiece, type = Queen, sprite = wq_sprite} 
-	bq_piece = { xCord = 4, yCord = 0,  player = BlackPiece, type = Queen, sprite = bq_sprite} 
+	wq_piece = { xCord = 3, yCord = 7,  player = WhitePiece, type = Queen, sprite = wq_sprite} 
+	bq_piece = { xCord = 3, yCord = 0,  player = BlackPiece, type = Queen, sprite = bq_sprite} 
 	        	 /*king*/
-	wking_piece = { xCord = 3, yCord = 7, player = WhitePiece, type = King, sprite = wking_sprite}
-	bking_piece = { xCord = 3, yCord = 0, player = BlackPiece, type = King, sprite = bking_sprite}
+	wking_piece = { xCord = 4, yCord = 7, player = WhitePiece, type = King, sprite = wking_sprite}
+	bking_piece = { xCord = 4, yCord = 0, player = BlackPiece, type = King, sprite = bking_sprite}
 			/*left piece of the bishop*/
 	bishop_w_piece = { xCord = 2, yCord = 7,  player = WhitePiece, type = Bishop, sprite = bishop_w_sprite} 
 	bishop_b_piece = { xCord = 2, yCord = 0,  player = BlackPiece, type = Bishop, sprite = bishop_b_sprite} 
