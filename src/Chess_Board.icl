@@ -55,11 +55,11 @@ where
 	rook_b_piece = { xCord = 0, yCord = 0,  player = BlackPiece, type = Rook, sprite = rook_b_sprite} 
 	
 	/*Initial board creation*/
-	initBoard = [Just rook_b_piece, Just knight_b_piece, Just bishop_b_piece, Just bking_piece, Just bq_piece, Just {bishop_b_piece & xCord = 5}, Just {knight_b_piece & xCord = 6}, Just {rook_b_piece & xCord = 7}] ++  	// black Main pieces area 
+	initBoard = [Just rook_b_piece, Just knight_b_piece, Just bishop_b_piece, Just bq_piece, Just bking_piece,  Just {bishop_b_piece & xCord = 5}, Just {knight_b_piece & xCord = 6}, Just {rook_b_piece & xCord = 7}] ++  	// black Main pieces area 
 				[Just { pawn_b_piece & xCord = x }  \\ x <- [0..7]] ++	// black pawns
 				[Nothing \\ s <- [0..7], y <- [1..4]] ++ 				 //middle empty area.
 				[Just { pawn_w_piece & xCord = x}  \\ x <- [0..7]] ++	// white pawns
-				[Just rook_w_piece, Just knight_w_piece, Just bishop_w_piece, Just wking_piece, Just wq_piece, Just {bishop_w_piece & xCord = 5}, Just {knight_w_piece & xCord = 6}, Just {rook_w_piece & xCord = 7}] 	// white Main pieces area
+				[Just rook_w_piece, Just knight_w_piece, Just bishop_w_piece,  Just wq_piece, Just wking_piece, Just {bishop_w_piece & xCord = 5}, Just {knight_w_piece & xCord = 6}, Just {rook_w_piece & xCord = 7}] 	// white Main pieces area
 				
 	// main board, with 8*8 tile of pieces or nothing.
 	board :: !Board
