@@ -22,6 +22,7 @@ tile :== {box_w = TILE_SIZE, box_h = TILE_SIZE}
 
 instance == ChessType
 
+initMoves :: {#Bool}
 	
 ::PieceColour = BlackPiece | WhitePiece | ColourError
 
@@ -50,5 +51,6 @@ instance == RGBColour
 ::GameState = {
 		worldMatrix :: !Board ,
 		selectedPiece :: Maybe Piece,
-		windowId :: !Id
+		windowId :: !Id,
+		validMoves :: {#Bool}
 	}

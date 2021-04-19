@@ -3,6 +3,11 @@ definition module Util.Rendering
 import StdIO, StdEnv, Util.Constants, Util.CostumFunctions
 
 
+/*______Checking if a move is Valid______*/
+
+isValid :: Int (*PSt GameState) -> Bool
+
+
 /*___Main Highlighting Function___*/
 showValidMoves :: (*PSt GameState) ->(*PSt GameState)
 

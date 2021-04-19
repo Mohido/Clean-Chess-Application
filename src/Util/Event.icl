@@ -35,17 +35,22 @@ where
 	*/
 	
 mouseHandler (MouseUp hitPoint _) (nil, pst=:{ls=gs, io}) 
-# msg = ("clicked tile: (" +++ toString (hitPoint.x / TILE_SIZE) +++ ", " +++ toString (mouseUpxCord / TILE_SIZE) +++ ")" +++ " The Piece is: " ) 
-= (trace_n msg (nil, finalPst))
+| gs.validMoves.[mouseUpxCord + mouseUpyCord * 8] =  (nil, doStuff mouseUpxCord mouseUpyCord pst )
+= (nil, showValidMoves pst)
+//= (trace_n msg (nil, finalPst))
 where
 	mouseUpxCord = (hitPoint.x / TILE_SIZE)					/// pixel to tile coords system
 	mouseUpyCord = (hitPoint.y / TILE_SIZE)					/// pixel to tile coords system
-	deHighlight  = showValidMoves pst						/// Dehighlight when the mouse goes up
-	finalPst = (\x | x = (UpdateGST mouseUpxCord mouseUpyCord deHighlight) |otherwise = deHighlight) (isJust gs.selectedPiece)
-
+	//deHighlight  = showValidMoves pst						/// Dehighlight when the mouse goes up
+	
 mouseHandler _ pst =  pst
 
-	
+doStuff :: Int Int (*PSt GameState) -> (*PSt GameState)
+doStuff mouseUpxCord mouseUpyCord pst=:{ls=gs, io} = finalPst
+where
+	finalPst 	 = (\x | x = (UpdateGST mouseUpxCord mouseUpyCord pst) |otherwise = pst) (isJust gs.selectedPiece)
+
+
 m_filter :: MouseState -> Bool
 m_filter (MouseMove _ _ ) = False
 m_filter _ = True

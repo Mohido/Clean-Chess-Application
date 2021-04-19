@@ -2,6 +2,15 @@ implementation module Util.Rendering
 
 import StdEnv, StdIO, Util.Constants, Util.CostumFunctions, Util.Highlights
 
+
+/*______Checking if a move is Valid______*/
+
+isValid :: Int (*PSt GameState) -> Bool
+isValid ind pst=:{ls,io}
+= ls.validMoves.[ind]
+
+
+
 /*Main Highlighting Function*/
 
 showValidMoves :: (*PSt GameState) ->(*PSt GameState)

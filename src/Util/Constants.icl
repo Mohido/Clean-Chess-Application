@@ -1,7 +1,15 @@
 implementation module Util.Constants
 
 import StdEnv, StdIO
-
+initMoves :: {#Bool}
+initMoves = {False,False,False,False,False,False,False,False,
+			 False,False,False,False,False,False,False,False,
+			 False,False,False,False,False,False,False,False,
+			 False,False,False,False,False,False,False,False,
+			 False,False,False,False,False,False,False,False,
+			 False,False,False,False,False,False,False,False,
+			 False,False,False,False,False,False,False,False,
+			 False,False,False,False,False,False,False,False}
 instance == ChessType
 where
 	(==) Rook Rook = True
