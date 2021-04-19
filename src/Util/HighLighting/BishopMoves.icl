@@ -26,9 +26,9 @@ ForwardMovesAlongMainDiagonal :: Int Int !Piece (*PSt GameState) -> (*PSt GameSt
 ForwardMovesAlongMainDiagonal xC yC p pst=:{ls, io} 
 | xC < 0 || yC > 7 = pst
 = case ls.worldMatrix.[xC + yC * 8] of 
-	Nothing = ForwardMovesAlongMainDiagonal (xC-1) (yC+1) p {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io}  
+	Nothing = ForwardMovesAlongMainDiagonal (xC-1) (yC+1) p {pst & io = appWindowPicture (ls.windowId) ((hiliteAt point tile)) io , ls = {ls & validMoves = updateBool (xC + yC * 8) ls.validMoves}}  
 	Just piece = case (piece.player == p.player) of
-					False = {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io} 
+					False = {pst & io = appWindowPicture (ls.windowId) ((hiliteAt point tile)) io , ls = {ls & validMoves = updateBool (xC + yC * 8) ls.validMoves}} 
 					True = pst
 where
 	point = {x = xC * TILE_SIZE , y = yC * TILE_SIZE}
@@ -39,9 +39,9 @@ BackWardMovesAlongMainDiagonal :: Int Int !Piece (*PSt GameState) -> (*PSt GameS
 BackWardMovesAlongMainDiagonal xC yC p pst=:{ls, io}
 | xC > 7 || yC < 0 = pst
 = case ls.worldMatrix.[xC + yC * 8] of 
-	Nothing = BackWardMovesAlongMainDiagonal (xC+1) (yC-1) p {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io}  
+	Nothing = BackWardMovesAlongMainDiagonal (xC+1) (yC-1) p {pst & io = appWindowPicture (ls.windowId) ((hiliteAt point tile)) io , ls = {ls & validMoves = updateBool (xC + yC * 8) ls.validMoves}}  
 	Just piece = case (piece.player == p.player) of 
-					False = {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io} // if not the same piece Highlight and stop
+					False = {pst & io = appWindowPicture (ls.windowId) ((hiliteAt point tile)) io , ls = {ls & validMoves = updateBool (xC + yC * 8) ls.validMoves}} // if not the same piece Highlight and stop
 					True = pst
 where
 	point = {x = xC * TILE_SIZE , y = yC * TILE_SIZE}
@@ -54,9 +54,9 @@ ForwardMovesAlongAntiDiagonal:: Int Int !Piece (*PSt GameState)-> (*PSt GameStat
 ForwardMovesAlongAntiDiagonal xC yC p pst=:{ls, io}
 | yC > 7 || xC > 7 = pst
 = case ls.worldMatrix.[xC + yC * 8] of 
-	Nothing = ForwardMovesAlongAntiDiagonal (xC + 1) (yC+1) p {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io}  
+	Nothing = ForwardMovesAlongAntiDiagonal (xC + 1) (yC+1) p {pst & io = appWindowPicture (ls.windowId) ((hiliteAt point tile)) io , ls = {ls & validMoves = updateBool (xC + yC * 8) ls.validMoves}}  
 	Just piece = case (piece.player == p.player) of 
-					False = {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io} // if not the same piece Highlight and stop
+					False = {pst & io = appWindowPicture (ls.windowId) ((hiliteAt point tile)) io , ls = {ls & validMoves = updateBool (xC + yC * 8) ls.validMoves}} // if not the same piece Highlight and stop
 					True = pst
 where
 	point = {x = xC * TILE_SIZE , y = yC * TILE_SIZE}
@@ -67,9 +67,9 @@ BackWardMovesAlongAntiDiagonal :: Int Int !Piece (*PSt GameState)-> (*PSt GameSt
 BackWardMovesAlongAntiDiagonal xC yC p pst=:{ls, io} 
 | yC < 0 || xC < 0 = pst
 = case ls.worldMatrix.[xC + yC * 8] of 
-	Nothing = BackWardMovesAlongAntiDiagonal (xC-1) (yC-1) p {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io}  
+	Nothing = BackWardMovesAlongAntiDiagonal (xC-1) (yC-1) p {pst & io = appWindowPicture (ls.windowId) ((hiliteAt point tile)) io , ls = {ls & validMoves = updateBool (xC + yC * 8) ls.validMoves}}  
 	Just piece = case (piece.player == p.player) of 
-					False = {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io} // if not the same piece Highlight and stop
+					False = {pst & io = appWindowPicture (ls.windowId) ((hiliteAt point tile)) io , ls = {ls & validMoves = updateBool (xC + yC * 8) ls.validMoves}} // if not the same piece Highlight and stop
 					True = pst
 where
 	point = {x = xC * TILE_SIZE , y = yC * TILE_SIZE}

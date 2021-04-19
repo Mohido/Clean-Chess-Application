@@ -26,9 +26,9 @@ CheckPoint :: Int Int !Piece (*PSt GameState) -> (*PSt GameState)
 CheckPoint xC yC p pst=:{ls, io} 
 | xC < 0  || xC > 7 || yC > 7|| yC < 0 = pst
 = case ls.worldMatrix.[xC +yC *8] of 
-	Nothing = {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io}
+	Nothing = {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io, ls = {ls & validMoves = updateBool (xC + yC * 8) ls.validMoves}}
 	Just piece = case (piece.player == p.player) of
 					True = pst
-					False= {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io}
+					False= {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io, ls = {ls & validMoves = updateBool (xC + yC * 8) ls.validMoves}}
 where
 	point = {x = xC * TILE_SIZE , y = yC * TILE_SIZE}

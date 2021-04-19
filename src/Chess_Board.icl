@@ -8,7 +8,7 @@ import Util.Reading, Util.Event, Util.Constants, Util.CostumFunctions, Util.Rend
 //Start Function and Initializing game assets
 Start:: *World -> *World
 Start world 
-# gs = {worldMatrix = board, selectedPiece = Nothing, windowId = wid}  		///initial game state (process state)
+# gs = {worldMatrix = board, selectedPiece = Nothing, windowId = wid, validMoves = initMoves}  		///initial game state (process state)
 = startIO SDI gs (initIO (wid, board) ) [ProcessClose closeProcess] worldFinal
 where
 	/*_______ world function + reading sprites________*/
@@ -83,5 +83,4 @@ where
 									WindowViewSize {w = 8*TILE_SIZE, h = 8*TILE_SIZE}, 	/// defining the size of the window.
 									WindowLook False (look preBoard) ,					/// This will take the state and update state away.
 									WindowMouse m_filter Able mouseHandler				/// Funcitons in Even.dcl. It handles mouse events
-								]				
-								
+								]
