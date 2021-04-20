@@ -3,14 +3,6 @@ implementation module Util.Rendering
 import StdEnv, StdIO, Util.Constants, Util.CostumFunctions, Util.Highlights, StdDebug
 
 
-/*______Checking if a move is Valid______*/
-
-isValid :: Int (*PSt GameState) -> Bool
-isValid ind pst=:{ls,io}
-= ls.validMoves.[ind]
-
-
-
 /*Main Highlighting Function*/
 
 showValidMoves :: (*PSt GameState) ->(*PSt GameState)
@@ -119,9 +111,37 @@ getPixelValue (x,y) piece
 *Custom function edits that help with moving pieces
 */
 
+/// Function to Completely Update the world
+UpdateGST :: Int Int (*PSt GameState) -> (*PSt GameState)
+UpdateGST mouseUpxCord mouseUpyCord pst=:{ls=gs, io}
+| mouseUpxCord == selectedxCord && selectedyCord == mouseUpyCord = pst
+=lastPst  
+where
+	piece		 = gs.selectedPiece
+	(selectedxCord,selectedyCord) = case piece of 
+										Nothing = (0,0)
+										Just p = (p.xCord,p.yCord)
+	pieceRendered = MovePiece     (selectedxCord,selectedyCord)  mouseUpxCord mouseUpyCord pst
+	updatedIo     = setWindowLook (pieceRendered.ls.windowId) False (False, look pieceRendered.ls.worldMatrix) pieceRendered.io
+	lastPst       = {pieceRendered & ls.selectedPiece = Nothing,io = updatedIo}
+
+
+
+/*Takes oldCoordinates, new Coordinates, and changes the piece's coordinates as well as rendering it in the new place*/
+MovePiece :: (Int,Int) Int Int (*PSt GameState) -> (*PSt GameState)
+MovePiece    (selectedxCord,selectedyCord) mouseUpxCord mouseUpyCord pst=:{ls, io} = lastPst
+where
+	piece 		= ls.selectedPiece
+	updatedPst  = updateWorldMatrix (mouseUpxCord, mouseUpyCord) (selectedxCord + selectedyCord * 8) pst 		//Piece is moved in the world matrix
+	erasePiece  = fillFunc mouseUpxCord mouseUpyCord updatedPst 
+	pieceMoved  = MovePieceFunc mouseUpxCord mouseUpyCord piece erasePiece
+	lastPst     = fillFunc selectedxCord selectedyCord pieceMoved
+
+/*____________Aux Functions__________*/
 //*Takes two Coordinates and a processState and fills the Board in the coordinates with the appropriate color*/
 fillFunc :: Int Int (*PSt GameState) -> (*PSt GameState)
 fillFunc xC yC pst=:{ls, io} = {pst & io = appWindowPicture (ls.windowId) (fillBoardAt xC yC) io}
+
 
 //*Takes two Coordinates and fills the Board Accordingly*/
 fillBoardAt :: Int Int *Picture -> *Picture
@@ -138,6 +158,10 @@ where
 	= fillAt {x= xC*TILE_SIZE, y= yC*TILE_SIZE} tile pic
 
 
+//*Takes two coordinates and draws the piece over there (An Aux for the previous function)*/	
+MovePieceFunc :: Int Int !(Maybe Piece) (*PSt GameState) -> (*PSt GameState)
+MovePieceFunc xC yC p pst=:{ls, io} = {pst & io = appWindowPicture (ls.windowId) (renderPieceAt xC yC p) io}
+
 ///*Takes two Coordinates and draws the piece at the selected coordinates*/
 renderPieceAt :: Int Int !(Maybe Piece) *Picture -> *Picture
 renderPieceAt _ _ Nothing pic = pic
@@ -147,34 +171,7 @@ where
 	 					\\  x <- [0..TILE_SIZE] ,y <- [0..TILE_SIZE] 
 	 					|	not (getPixelValue (x, y) piece.sprite == {r=255,g=0,b=255})]
 
-//*Takes two coordinates and draws the piece over there (An Aux for the previous function)*/	
-MovePieceFunc :: Int Int !(Maybe Piece) (*PSt GameState) -> (*PSt GameState)
-MovePieceFunc xC yC p pst=:{ls, io} = {pst & io = appWindowPicture (ls.windowId) (renderPieceAt xC yC p) io}
-
-
-//*Takes two coordinates and updates the piece's coordinates accordingly*/
-updatePiece :: Int Int !(Maybe Piece) -> !(Maybe Piece)
-updatePiece xC yC Nothing = Nothing
-updatePiece xC yC (Just p) = Just {p & xCord = xC , yCord = yC}
- 
-
-/// Function to Completely Update the world
-UpdateGST :: Int Int (*PSt GameState) -> (*PSt GameState)
-UpdateGST mouseUpxCord mouseUpyCord pst=:{ls=gs, io}
-| mouseUpxCord == selectedxCord && selectedyCord == mouseUpyCord = pst
-=lastPst  
-where
-	piece = gs.selectedPiece
-	(selectedxCord,selectedyCord) = case piece of 
-										Nothing = (0,0)
-										Just p = (p.xCord,p.yCord)
-	erasePiece = fillFunc mouseUpxCord mouseUpyCord pst			
-	pieceMoved = MovePieceFunc mouseUpxCord mouseUpyCord piece erasePiece
-	fillOver   = fillFunc selectedxCord selectedyCord pieceMoved
-	prelastGs  = updateWorldMatrix (mouseUpxCord, mouseUpyCord) (selectedxCord + selectedyCord * 8) piece gs 
-	lastGs     = {prelastGs & selectedPiece = Nothing}
-	lastPst    = {fillOver & ls=lastGs, io = setWindowLook (lastGs.windowId) False (False, look lastGs.worldMatrix) io } 
-
+	
 /**
 For further game Optimisation plans:-
 *	fillBoardAt :: !Rectangle !Colour *Picture -> *Picture
