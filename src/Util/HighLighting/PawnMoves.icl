@@ -26,15 +26,11 @@ moveForwardPawnAux_b :: Int Int !Piece (*PSt GameState)-> (*PSt GameState)
 moveForwardPawnAux_b xC yC p pst=:{ls, io}
 |(yC == 2) = case ls.worldMatrix.[xC + yC * 8] of //If pawn is at init pos, can move twice
 				Nothing = moveForwardPawnAux_b xC (yC+1) p {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io, ls = {ls & validMoves = updateBool (xC + yC * 8) ls.validMoves}} 
-				Just piece = case (p.player == piece.player) of
-						True = pst
-						False= {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io, ls = {ls & validMoves = updateBool (xC + yC * 8) ls.validMoves}}			
+				Just piece = pst			
 
 |otherwise = case ls.worldMatrix.[xC + yC * 8] of //Otherwise, can only move once
 				Nothing = {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io, ls = {ls & validMoves = updateBool (xC + yC * 8) ls.validMoves}}
-				Just piece = case (p.player == piece.player) of
-						True = pst
-						False= {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io, ls = {ls & validMoves = updateBool (xC + yC * 8) ls.validMoves}}
+				Just piece = pst
 where
 	point  = {x = xC * TILE_SIZE , y = yC * TILE_SIZE}
 
@@ -42,15 +38,11 @@ moveForwardPawnAux_w :: Int Int !Piece (*PSt GameState)-> (*PSt GameState)
 moveForwardPawnAux_w xC yC p pst=:{ls, io}
 |(yC == 5) = case ls.worldMatrix.[xC + yC * 8] of //If pawn is at init pos, can move twice
 				Nothing = moveForwardPawnAux_w xC (yC-1) p {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io, ls = {ls & validMoves = updateBool (xC + yC * 8) ls.validMoves}} 
-				Just piece = case (p.player == piece.player) of
-						True = pst
-						False= {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io, ls = {ls & validMoves = updateBool (xC + yC * 8) ls.validMoves}}			
-
+				Just piece = pst
+				
 |otherwise = case ls.worldMatrix.[xC + yC * 8] of //Otherwise, can only move once
 				Nothing = {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io, ls = {ls & validMoves = updateBool (xC + yC * 8) ls.validMoves}}
-				Just piece = case (p.player == piece.player) of
-						True = pst
-						False= {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io, ls = {ls & validMoves = updateBool (xC + yC * 8) ls.validMoves}}
+				Just piece = pst
 where
 	point  = {x = xC * TILE_SIZE , y = yC * TILE_SIZE}
 
