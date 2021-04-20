@@ -1,6 +1,6 @@
 implementation module Util.Rendering
 
-import StdEnv, StdIO, Util.Constants, Util.CostumFunctions, Util.Highlights
+import StdEnv, StdIO, Util.Constants, Util.CostumFunctions, Util.Highlights, StdDebug
 
 
 /*______Checking if a move is Valid______*/
@@ -28,17 +28,19 @@ showValidMoves pst=:{ls, io} =
 								
 /*________Rendering Function_____*/
 
+//fillBoardAt :: !Board !Rectangle !Colour *Picture -> *Picture
+//fillBoardAt board {corner1, corner2} color pic 
 /**
 * Painting the window's context. Once it critically needs updating (on creation and resizing)
 */
 look :: !Board SelectState UpdateState *Picture -> *Picture
-look board _ {oldFrame, newFrame} pic
+look board _ {oldFrame, newFrame, updArea} pic
 # newFrameSize	= rectangleSize newFrame 				/// The new Window rectangle size
 # oldFrameSize 	= rectangleSize oldFrame 				/// The old Window rectangle size
 | newFrameSize.w > 8*TILE_SIZE || 	
 		newFrameSize.h > 8*TILE_SIZE  = pic 			///If window resizing is not impacting the main area of the game don't redraw the whole game.
-# b_col_1 = RGB {r =130, g=63, b=59} 					///Board first colour
-# b_col_2 = White										///Board sec.. colour
+# b_col_1 = White										///Board first colour
+# b_col_2 = RGB {r =130, g=63, b=59} 					///Board sec.. colour
 = fillPieces board (fillBoard b_col_1 (clear b_col_2 pic))
 
 
@@ -124,8 +126,8 @@ fillFunc xC yC pst=:{ls, io} = {pst & io = appWindowPicture (ls.windowId) (fillB
 //*Takes two Coordinates and fills the Board Accordingly*/
 fillBoardAt :: Int Int *Picture -> *Picture
 fillBoardAt xC yC pic 
-|(xC rem 2 == 0 && yC rem 2 == 0) || (xC rem 2 <>  0 && yC rem 2 <> 0) = DrawColour xC yC pic
-= DrawWhite xC yC pic
+|(xC rem 2 == 0 && yC rem 2 == 0) || (xC rem 2 <>  0 && yC rem 2 <> 0) =  DrawWhite xC yC pic
+=DrawColour xC yC pic
 where
 	DrawColour xC yC pic
 	#ourColour = RGB{r =130, g=63, b=59}
@@ -154,7 +156,7 @@ MovePieceFunc xC yC p pst=:{ls, io} = {pst & io = appWindowPicture (ls.windowId)
 updatePiece :: Int Int !(Maybe Piece) -> !(Maybe Piece)
 updatePiece xC yC Nothing = Nothing
 updatePiece xC yC (Just p) = Just {p & xCord = xC , yCord = yC}
-
+ 
 
 /// Function to Completely Update the world
 UpdateGST :: Int Int (*PSt GameState) -> (*PSt GameState)
@@ -169,8 +171,9 @@ where
 	erasePiece = fillFunc mouseUpxCord mouseUpyCord pst			
 	pieceMoved = MovePieceFunc mouseUpxCord mouseUpyCord piece erasePiece
 	fillOver   = fillFunc selectedxCord selectedyCord pieceMoved
-	lastGs     = updateWorldMatrix (mouseUpxCord, mouseUpyCord) (selectedxCord + selectedyCord * 8) piece gs
-	lastPst    = {fillOver & ls=lastGs} 
+	prelastGs  = updateWorldMatrix (mouseUpxCord, mouseUpyCord) (selectedxCord + selectedyCord * 8) piece gs 
+	lastGs     = {prelastGs & selectedPiece = Nothing}
+	lastPst    = {fillOver & ls=lastGs, io = setWindowLook (lastGs.windowId) False (False, look lastGs.worldMatrix) io } 
 
 /**
 For further game Optimisation plans:-

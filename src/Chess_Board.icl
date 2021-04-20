@@ -8,7 +8,7 @@ import Util.Reading, Util.Event, Util.Constants, Util.CostumFunctions, Util.Rend
 //Start Function and Initializing game assets
 Start:: *World -> *World
 Start world 
-# gs = { turn={player1=True,player2=False} , worldMatrix = board, selectedPiece = Nothing, windowId = wid, validMoves = initMoves, isTherehilite =False}  		///initial game state (process state)
+# gs = { turnCount=0,players=initPlayers , worldMatrix = board, selectedPiece = Nothing, windowId = wid, validMoves = initMoves}  		///initial game state (process state)
 = startIO SDI gs (initIO (wid, board) ) [ProcessClose closeProcess] worldFinal
 where
 	/*_______ world function + reading sprites________*/
@@ -36,11 +36,11 @@ where
 	
 	/*_____________Loading pieces Area________________*/ 
 	       		 /*queen*/
-	wq_piece = { xCord = 4, yCord = 7,  player = WhitePiece, type = Queen, sprite = wq_sprite} 
-	bq_piece = { xCord = 4, yCord = 0,  player = BlackPiece, type = Queen, sprite = bq_sprite} 
+	wq_piece = { xCord = 3, yCord = 7,  player = WhitePiece, type = Queen, sprite = wq_sprite} 
+	bq_piece = { xCord = 3, yCord = 0,  player = BlackPiece, type = Queen, sprite = bq_sprite} 
 	        	 /*king*/
-	wking_piece = { xCord = 3, yCord = 7, player = WhitePiece, type = King, sprite = wking_sprite}
-	bking_piece = { xCord = 3, yCord = 0, player = BlackPiece, type = King, sprite = bking_sprite}
+	wking_piece = { xCord = 4, yCord = 7, player = WhitePiece, type = King, sprite = wking_sprite}
+	bking_piece = { xCord = 4, yCord = 0, player = BlackPiece, type = King, sprite = bking_sprite}
 			/*left piece of the bishop*/
 	bishop_w_piece = { xCord = 2, yCord = 7,  player = WhitePiece, type = Bishop, sprite = bishop_w_sprite} 
 	bishop_b_piece = { xCord = 2, yCord = 0,  player = BlackPiece, type = Bishop, sprite = bishop_b_sprite} 
@@ -55,11 +55,11 @@ where
 	rook_b_piece = { xCord = 0, yCord = 0,  player = BlackPiece, type = Rook, sprite = rook_b_sprite} 
 	
 	/*Initial board creation*/
-	initBoard = [Just rook_b_piece, Just knight_b_piece, Just bishop_b_piece, Just bking_piece, Just bq_piece, Just {bishop_b_piece & xCord = 5}, Just {knight_b_piece & xCord = 6}, Just {rook_b_piece & xCord = 7}] ++  	// black Main pieces area 
+	initBoard = [Just rook_b_piece, Just knight_b_piece, Just bishop_b_piece, Just bq_piece, Just bking_piece, Just {bishop_b_piece & xCord = 5}, Just {knight_b_piece & xCord = 6}, Just {rook_b_piece & xCord = 7}] ++  	// black Main pieces area 
 				[Just { pawn_b_piece & xCord = x }  \\ x <- [0..7]] ++	// black pawns
 				[Nothing \\ s <- [0..7], y <- [1..4]] ++ 				 //middle empty area.
 				[Just { pawn_w_piece & xCord = x}  \\ x <- [0..7]] ++	// white pawns
-				[Just rook_w_piece, Just knight_w_piece, Just bishop_w_piece, Just wking_piece, Just wq_piece, Just {bishop_w_piece & xCord = 5}, Just {knight_w_piece & xCord = 6}, Just {rook_w_piece & xCord = 7}] 	// white Main pieces area
+				[Just rook_w_piece, Just knight_w_piece, Just bishop_w_piece, Just wq_piece, Just wking_piece, Just {bishop_w_piece & xCord = 5}, Just {knight_w_piece & xCord = 6}, Just {rook_w_piece & xCord = 7}] 	// white Main pieces area
 				
 	// main board, with 8*8 tile of pieces or nothing.
 	board :: !Board

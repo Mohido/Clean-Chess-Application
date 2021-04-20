@@ -14,9 +14,9 @@ pictDomain :== {corner1 = {x=0		    , y=0},
 
 tile :== {box_w = TILE_SIZE, box_h = TILE_SIZE}
 
+ 
 
-
-
+initPlayers :: {Player}
 
 ::ChessType = Rook | Knight | Bishop | Queen | King | Pawn | NotPiece
 
@@ -44,18 +44,19 @@ instance == RGBColour
 	sprite:: PiecePicture
 	}
 
-:: Players = PlayerOne | PlayerTwo
-
-:: Player = {player1 :: Bool, player2 :: Bool}
+:: Player = { colour 		 :: PieceColour
+			, castleLeft 	 :: Bool
+			, castleRight	 :: Bool
+			}
 
 :: Board :== {!(Maybe Piece)}
 
-instance == Players
+
 ::GameState = {
-		turn			 :: Player,
+		turnCount		 :: Int,
+		players			 :: {Player},
 		worldMatrix      :: !Board ,
 		selectedPiece	 :: Maybe Piece,
 		windowId 		 :: !Id,
-		validMoves 		 :: {#Bool},
-		isTherehilite	 :: Bool
+		validMoves 		 :: {#Bool}
 	}
