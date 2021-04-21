@@ -1,6 +1,6 @@
 implementation module Util.Rendering
 
-import StdEnv, StdIO, Util.Constants, Util.CostumFunctions, Util.Highlights, StdDebug
+import StdEnv, StdIO, Util.Constants, Util.CostumFunctions, Util.Highlights, Util.Dialogs
 
 
 /*Main Highlighting Function*/
@@ -117,11 +117,12 @@ UpdateGST mouseUpxCord mouseUpyCord pst=:{ls=gs, io}
 | mouseUpxCord == selectedxCord && selectedyCord == mouseUpyCord = pst
 =lastPst  
 where
+	proPst 		 = promotion mouseUpyCord pst 
 	piece		 = gs.selectedPiece
 	(selectedxCord,selectedyCord) = case piece of 
 										Nothing = (0,0)
 										Just p = (p.xCord,p.yCord)
-	pieceRendered = MovePiece     (selectedxCord,selectedyCord)  mouseUpxCord mouseUpyCord pst
+	pieceRendered = MovePiece     (selectedxCord,selectedyCord)  mouseUpxCord mouseUpyCord proPst
 	updatedIo     = setWindowLook (pieceRendered.ls.windowId) False (False, look pieceRendered.ls.worldMatrix) pieceRendered.io
 	lastPst       = {pieceRendered & ls.selectedPiece = Nothing,io = updatedIo}
 
