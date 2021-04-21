@@ -5,9 +5,17 @@ from StdFunc import seq
 
 
 HighlightKing :: (*PSt GameState) !Piece -> (*PSt GameState)
-HighlightKing pst=:{ls, io} p = seq [KingValidMoves (xC-1) yC p, KingValidMoves (xC+1) yC p,KingValidMoves xC (yC+1) p, 
-	KingValidMoves xC (yC-1) p, KingValidMoves (xC+1) (yC+1) p,KingValidMoves (xC+1) (yC-1) p,KingValidMoves (xC-1) (yC+1) p,
-	KingValidMoves (xC-1) (yC-1) p, KingSideCastle (xC+1) yC p, QueenSideCastle (xC-1) yC p] newPst
+HighlightKing pst=:{ls, io} p = seq [	KingValidMoves (xC-1) yC p, 
+										KingValidMoves (xC+1) yC p,
+										KingValidMoves xC (yC+1) p, 
+										KingValidMoves xC (yC-1) p, 
+										KingValidMoves (xC+1) (yC+1) p,
+										KingValidMoves (xC+1) (yC-1) p,
+										KingValidMoves (xC-1) (yC+1) p,
+										KingValidMoves (xC-1) (yC-1) p, 
+										KingSideCastle (xC+1) yC p, 
+										QueenSideCastle (xC-1) yC p
+									 ] newPst
 where
 	xC 	   = (p.xCord) 
 	yC 	   = (p.yCord) 
