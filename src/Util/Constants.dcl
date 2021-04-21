@@ -81,7 +81,5 @@ instance == RGBColour
 		selectedPiece	 :: Maybe Piece,
 		windowId 		 :: !Id,
 		validMoves 		 :: {#Bool},
-		sprites 		 :: Sprites,
-		checkWihte 		 :: Bool,
-		checkBlack 		 :: Bool
+		sprites 		 :: Sprites
 	}
