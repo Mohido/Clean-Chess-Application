@@ -5,7 +5,7 @@ import Util.Reading, Util.Event, Util.Constants, Util.CostumFunctions, Util.Rend
 
 /*__________________The dialog function to do the promotion__________________*/
 promotion :: Int Int (*PSt GameState) -> (*PSt GameState)
-promotion mouseUpxCord mouseUpyCord pst =:{ls = gs, io}
+promotion mouseUpxCord mouseUpyCord pst =:{ls = gs , io}
 	# p = fromJust gs.selectedPiece
 	| ( (p.type == Pawn) && (mouseUpyCord == 7) && (p.player == BlackPiece)) = snd (open_dialog_promo_black pst) 
 	| ( (p.type == Pawn) && (mouseUpyCord == 0) && (p.player == WhitePiece)) = snd (open_dialog_promo_white pst)
@@ -20,7 +20,7 @@ promotion mouseUpxCord mouseUpyCord pst =:{ls = gs, io}
 					  :+: CustomButtonControl {w=64,h=64} (\ _ _ = paintPiece ls.sprites.whiteBishop {x = 0, y = 0} ) 	[ControlFunction (promotePawn mouseUpxCord mouseUpyCord "whiteBishop")]
 					  :+: CustomButtonControl {w=64,h=64} (\ _ _ = paintPiece ls.sprites.whiteRook {x = 0, y = 0} ) 	[ControlFunction (promotePawn mouseUpxCord mouseUpyCord "whiteRook")]
 					  :+: CustomButtonControl {w=64,h=64} (\ _ _ = paintPiece ls.sprites.whiteKnight {x = 0, y = 0} ) 	[ControlFunction (promotePawn mouseUpxCord mouseUpyCord "whiteKnight")]
-					) [WindowViewSize {w=6*TILE_SIZE,h=128}, WindowId okId, WindowPos (RightTo ls.windowId, OffsetAlign AlignCenter) ]
+					) [WindowViewSize {w=5*TILE_SIZE,h=100}, WindowId okId, WindowPos (RightTo ls.windowId, OffsetAlign AlignCenter) ]
 						 
 		open_dialog_promo_black :: (*PSt GameState) -> (ErrorReport, *PSt GameState)
 		open_dialog_promo_black pst=:{ls, io} 
@@ -31,7 +31,7 @@ promotion mouseUpxCord mouseUpyCord pst =:{ls = gs, io}
 					  :+: CustomButtonControl {w=64,h=64} (\ _ _ = paintPiece ls.sprites.blackBishop {x = 0, y = 0} ) 	[ControlFunction (promotePawn mouseUpxCord mouseUpyCord "blackBishop")]
 					  :+: CustomButtonControl {w=64,h=64} (\ _ _ = paintPiece ls.sprites.blackRook {x = 0, y = 0} ) 	[ControlFunction (promotePawn mouseUpxCord mouseUpyCord "blackRook")]
 					  :+: CustomButtonControl {w=64,h=64} (\ _ _ = paintPiece ls.sprites.blackKnight {x = 0, y = 0} ) 	[ControlFunction (promotePawn mouseUpxCord mouseUpyCord "blackKnight")]
-					) [WindowViewSize {w=6*TILE_SIZE,h=128}, WindowId okId, WindowPos (RightTo ls.windowId, OffsetAlign AlignCenter) ]
+					) [WindowViewSize {w=5*TILE_SIZE,h=100}, WindowId okId, WindowPos (RightTo ls.windowId, OffsetAlign AlignCenter) ]
 
 
 /*_______________Change into___________*/

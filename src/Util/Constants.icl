@@ -21,6 +21,9 @@ initPlayers = {
 			  }
 
 
+move :: SoundSample
+move = { soundid = SND_JUMP, soundfile = "./Util/SOUNDS/JUMP.WAV", soundbuffers =  1 }
+
 instance == ChessType
 where
 	(==) Rook Rook = True

@@ -56,7 +56,7 @@ KingSideCastle xCoordinate yCoordinate clickedPiece pst=:{ls, io}
 											True = case (piece.type == Rook) of
 													False = pst 
 													True = {pst & io = appWindowPicture (ls.windowId) (hiliteAt {  x = (xCoordinate + 1) * TILE_SIZE , y = yCoordinate * TILE_SIZE}  tile) io, ls = {ls & validMoves = updateBool ((xCoordinate + 1) + yCoordinate * 8) ls.validMoves}} 
-							Just piece = pst
+				Just piece = pst
 	Just piece = pst
 
 

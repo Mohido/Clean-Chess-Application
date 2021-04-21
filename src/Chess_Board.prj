@@ -45,6 +45,8 @@ Global
 		Path:	{Application}*Libraries*ObjectIO
 		Path:	{Application}*Libraries*ObjectIO*OS Windows
 		Path:	{Application}*Libraries*StdLib
+		Path:	{Application}*Libraries
+		Path:	{Application}*Libraries*GameLib
 	OtherPaths
 		Path:	{Application}*Libraries*StdEnv
 	Precompile:	
@@ -234,6 +236,20 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	Util.Rendering
+		Dir:	{Project}
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	False
+	Module
+		Name:	Util.Sounds
 		Dir:	{Project}
 		Compiler
 			NeverMemoryProfile:	False

@@ -1,6 +1,8 @@
 implementation module Util.Event
 
-import StdEnv, StdIO, StdDebug, Util.Constants, Util.Rendering, Util.CostumFunctions, Util.Dialogs
+import StdEnv, StdIO, StdDebug, Util.Constants, Util.Rendering, Util.CostumFunctions, Util.Dialogs, Util.Sounds
+
+
 
 
 ///____________ Mouse Handling events functions_____________
@@ -24,14 +26,18 @@ where
 mouseHandler (MouseUp hitPoint _) (nil, pst=:{ls=gs, io}) 
 | hitPoint.x > TILE_SIZE*TILE_SIZE || hitPoint.y > TILE_SIZE*TILE_SIZE = (nil, deHighlight) // if the mouseUp event happens out of the picture Context
 |(isNothing gs.selectedPiece) = (nil,pst)													// seeing if a piece is selected currently, if not, do nothing 
-| gs.validMoves.[mouseUpxCord + mouseUpyCord * 8] =  (nil, changedTurns)				   	// if a move is valid, update
+| gs.validMoves.[index] =  (nil, playSoundPst)				   	// if a move is valid, update
 = (nil, {deHighlight & ls.selectedPiece = Nothing})											// if nothing then just dehighlight and move on
 where
+	index 		 = mouseUpxCord + mouseUpyCord * 8
 	mouseUpxCord = (hitPoint.x / TILE_SIZE)													/// pixel to tile coords system
 	mouseUpyCord = (hitPoint.y / TILE_SIZE)													/// pixel to tile coords system
 	deHighlight  = showValidMoves pst 														/// Dehighlight when the mouse goes up
-	editedPst	 = UpdateGST mouseUpxCord mouseUpyCord deHighlight							/// move the piece and update the gameState 
-	changedTurns = {editedPst & ls.turnCount = (editedPst.ls.turnCount + 1) rem 2 }			/// take the edited state and update the turns
+	editedPst    = UpdateGST mouseUpxCord mouseUpyCord deHighlight							/// move the piece and update the gameState 
+	changedTurns = {editedPst & ls.turnCount = (editedPst.ls.turnCount + 1) rem 2}			/// take the edited state and update the turns
+	playSoundPst = case deHighlight.ls.worldMatrix.[index] of 								/// playing sounds when the pieces move
+					 Nothing 		=  playSoundmove changedTurns
+					 Just something =  playSoundCapture changedTurns
 
 
 /*________Other Mouse Events______________ */

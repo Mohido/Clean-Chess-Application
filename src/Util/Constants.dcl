@@ -14,7 +14,16 @@ pictDomain :== {corner1 = {x=0		    , y=0},
 
 tile :== {box_w = TILE_SIZE, box_h = TILE_SIZE}
 
- 
+SND_JUMP :==   1
+:: SoundID2 :== Int
+:: SoundSample
+  = { soundid       :: !SoundID2        // id for the sample (any number)
+   	 , soundfile     :: !String          // WAV file
+ 	 , soundbuffers  :: !Int             // max times sample can be played together
+ 	 }
+
+move :: SoundSample
+
 
 initPlayers :: {Player}
 
@@ -65,7 +74,7 @@ instance == RGBColour
 				blackPawn 	:: PiecePicture
 			  }
 
-::GameState = {
+:: GameState = {
 		turnCount		 :: Int,
 		players			 :: {Player},
 		worldMatrix      :: !Board ,

@@ -1,7 +1,8 @@
 implementation module Util.CostumFunctions
 
 import StdEnv, StdIO, Util.Constants, Util.Rendering
-
+import clCCall_12
+import	ostoolbox
 seqArray :: !{*s -> *s} *s -> *s
 seqArray arr param = auxSeqArray arr param 0
 where
@@ -27,6 +28,4 @@ updatePiece :: Int Int !(Maybe Piece) -> !(Maybe Piece)
 updatePiece xC yC Nothing = Nothing
 updatePiece xC yC (Just p) = Just {p & xCord = xC , yCord = yC}
  
-
-	
 
