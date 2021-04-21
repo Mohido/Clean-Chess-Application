@@ -3,7 +3,11 @@ import StdEnv, StdIO, Util.Constants, StdDebug
 from StdFunc import seq
 
 highLightRook :: (*PSt GameState) !Piece -> (*PSt GameState)
-highLightRook pst=:{ls, io} p = seq [goLeftRook (xC-1) yC p, goRightRook (xC+1) yC p, goForwardRook xC (yC+1) p, goBackwardRook xC (yC-1) p] newPst
+highLightRook pst=:{ls, io} p = seq [	goLeftRook (xC-1) yC p, 
+									 	goRightRook (xC+1) yC p,
+									 	goForwardRook xC (yC+1) p,
+									 	goBackwardRook xC (yC-1) p
+									] newPst
 where
 	xC 	   = (p.xCord) 
 	yC 	   = (p.yCord) 

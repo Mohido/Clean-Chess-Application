@@ -12,7 +12,10 @@ from StdFunc import seq
 
 
 HighlightBishop :: (*PSt GameState) !Piece -> (*PSt GameState)
-HighlightBishop pst=:{ls, io} p = seq [ForwardMovesAlongMainDiagonal (xC-1) (yC+1) p, BackWardMovesAlongMainDiagonal (xC+1) (yC-1) p, ForwardMovesAlongAntiDiagonal (xC+1) (yC+1) p, BackWardMovesAlongAntiDiagonal (xC-1) (yC-1) p] newPst
+HighlightBishop pst=:{ls, io} p = seq [ForwardMovesAlongMainDiagonal (xC-1) (yC+1) p,
+										BackWardMovesAlongMainDiagonal (xC+1) (yC-1) p, 
+										ForwardMovesAlongAntiDiagonal (xC+1) (yC+1) p, 
+										BackWardMovesAlongAntiDiagonal (xC-1) (yC-1) p] newPst
 where
 	xC 	   = (p.xCord) 
 	yC 	   = (p.yCord) 
