@@ -8,7 +8,16 @@ import Util.Reading, Util.Event, Util.Constants, Util.CostumFunctions, Util.Rend
 //Start Function and Initializing game assets
 Start:: *World -> *World
 Start world 
-# gs = { turnCount=0,players=initPlayers , worldMatrix = board, selectedPiece = Nothing, windowId = wid, validMoves = initMoves}  		///initial game state (process state)
+# gs = { turnCount=0,players=initPlayers , worldMatrix = board,
+		 selectedPiece = Nothing, windowId = wid, validMoves = initMoves , 
+		 /*sprites = { wq_sprite , bishop_w_sprite , rook_w_sprite , knight_w_sprite , 
+		 			 bq_sprite , bishop_b_sprite , rook_b_sprite , knight_b_sprite } */
+		 sprites = {whiteKing = wking_sprite , blackKing = bking_sprite, 
+		 			whiteQueen = wq_sprite , blackQueen = bq_sprite,
+		 			whiteBishop = bishop_w_sprite , blackBishop = bishop_b_sprite,
+		 			whiteRook = rook_w_sprite , blackRook = rook_b_sprite,
+		 			whiteKnight = knight_w_sprite, blackKnight = knight_b_sprite,
+		 			whitePawn = pawn_w_sprite, blackPawn = pawn_b_sprite   } }  		///initial game state (process state)
 = startIO SDI gs (initIO (wid, board) ) [ProcessClose closeProcess] worldFinal
 where
 	/*_______ world function + reading sprites________*/

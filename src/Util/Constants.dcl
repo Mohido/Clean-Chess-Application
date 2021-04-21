@@ -51,6 +51,19 @@ instance == RGBColour
 
 :: Board :== {!(Maybe Piece)}
 
+:: Sprites = {  whiteKing 	:: PiecePicture,
+				blackKing 	:: PiecePicture,
+				whiteQueen 	:: PiecePicture,
+				blackQueen 	:: PiecePicture,
+				whiteBishop :: PiecePicture,
+				blackBishop :: PiecePicture,
+				whiteRook 	:: PiecePicture,
+				blackRook 	:: PiecePicture,
+				whiteKnight :: PiecePicture,
+				blackKnight :: PiecePicture,
+				whitePawn 	:: PiecePicture,
+				blackPawn 	:: PiecePicture
+			  }
 
 ::GameState = {
 		turnCount		 :: Int,
@@ -58,5 +71,7 @@ instance == RGBColour
 		worldMatrix      :: !Board ,
 		selectedPiece	 :: Maybe Piece,
 		windowId 		 :: !Id,
-		validMoves 		 :: {#Bool}
+		validMoves 		 :: {#Bool},
+		//sprites 		 :: {#PiecePicture}
+		sprites 		 :: Sprites
 	}

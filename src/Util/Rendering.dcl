@@ -69,6 +69,6 @@ For further game Optimisation plans:-
 */
 
 
-
+MovePiece :: (Int,Int) Int Int (*PSt GameState) -> (*PSt GameState)
 
 
