@@ -122,19 +122,19 @@ where
 	piece		 				  = fromJust gs.selectedPiece
 	proPst 		 				  = promotion mouseUpxCord mouseUpyCord pst
 	(selectedxCord,selectedyCord) = (piece.xCord,piece.yCord)
-	pieceRendered 				  = MovePiece     (selectedxCord,selectedyCord) mouseUpxCord mouseUpyCord proPst
+	pieceRendered 				  = MovePiece     (selectedxCord,selectedyCord) mouseUpxCord mouseUpyCord piece proPst
 	updatedIo     				  = setWindowLook (pieceRendered.ls.windowId) False (False, look pieceRendered.ls.worldMatrix) pieceRendered.io
 	lastPst       				  = {pieceRendered & io = updatedIo}
 
 
 /*Takes oldCoordinates, new Coordinates, and changes the piece's coordinates as well as rendering it in the new place*/
-MovePiece :: (Int,Int) Int Int (*PSt GameState) -> (*PSt GameState)
-MovePiece    (selectedxCord,selectedyCord) mouseUpxCord mouseUpyCord pst=:{ls, io} = lastPst
+MovePiece :: (Int,Int) Int Int !Piece (*PSt GameState) -> (*PSt GameState)
+MovePiece    (selectedxCord,selectedyCord) mouseUpxCord mouseUpyCord piece pst=:{ls, io}
+ = lastPst
 where
-	piece 		= ls.selectedPiece
 	updatedPst  = updateWorldMatrix (mouseUpxCord, mouseUpyCord) (selectedxCord + selectedyCord * 8) pst 		//Piece is moved in the world matrix
 	erasePiece  = fillFunc mouseUpxCord mouseUpyCord updatedPst 
-	pieceMoved  = MovePieceFunc mouseUpxCord mouseUpyCord erasePiece
+	pieceMoved  = MovePieceFunc mouseUpxCord mouseUpyCord piece erasePiece
 	prelastPst  = fillFunc selectedxCord selectedyCord pieceMoved
 	lastPst 	= {prelastPst & ls.selectedPiece = Nothing} 
 
@@ -160,13 +160,12 @@ where
 
 
 //*Takes two coordinates and draws the piece over there (An Aux for the previous function)*/	
-MovePieceFunc :: Int Int (*PSt GameState) -> (*PSt GameState)
-MovePieceFunc xC yC pst=:{ls, io} = {pst & io = appWindowPicture (ls.windowId) (renderPieceAt xC yC ls.selectedPiece) io}
+MovePieceFunc :: Int Int !Piece (*PSt GameState) -> (*PSt GameState)
+MovePieceFunc xC yC piece pst=:{ls, io} = {pst & io = appWindowPicture (ls.windowId) (renderPieceAt xC yC piece) io}
 
 ///*Takes two Coordinates and draws the piece at the selected coordinates*/
-renderPieceAt :: Int Int !(Maybe Piece) *Picture -> *Picture
-renderPieceAt _ _ Nothing pic = pic
-renderPieceAt xC yC (Just piece) pic = foldr fillPixel pic pixelsValues
+renderPieceAt :: Int Int !Piece *Picture -> *Picture
+renderPieceAt xC yC piece pic = foldr fillPixel pic pixelsValues
 where
 	 pixelsValues = [ (y + xC * TILE_SIZE, x + TILE_SIZE * yC, getPixelValue (x, y) piece.sprite) 
 	 					\\  x <- [0..TILE_SIZE] ,y <- [0..TILE_SIZE] 

@@ -10,6 +10,13 @@ playSoundmove pst=:{ls,io}
 # io2 = ioStSetWorld world io 
 = {pst & io = io2}
 
+playSoundpromotion :: (*PSt GameState) -> (*PSt GameState) 
+playSoundpromotion pst=:{ls,io}
+# (world, io)  = ioStGetWorld io 
+# (bol, world) = playSoundFile "./Util/sounds/promotion.WAV" world
+# io2 = ioStSetWorld world io 
+= {pst & io = io2}
+
 
 playSoundCapture :: (*PSt GameState) -> (*PSt GameState) 
 playSoundCapture pst=:{ls,io}

@@ -1,6 +1,6 @@
 implementation module Util.Dialogs
 
-import Util.Reading, Util.Event, Util.Constants, Util.CostumFunctions, Util.Rendering
+import Util.Reading, Util.Event, Util.Constants, Util.CostumFunctions, Util.Rendering, Util.Sounds
 
 
 /*__________________The dialog function to do the promotion__________________*/
@@ -47,9 +47,10 @@ promotePawn  mouseUpxCord mouseUpyCord choice (nil , pst=:{ls, io})
 			"blackBishop"	= Just {oldPiece & player=BlackPiece,type=Bishop ,sprite=ls.sprites.blackBishop}
 			"blackRook"		= Just {oldPiece & player=BlackPiece,type=Rook   ,sprite=ls.sprites.blackRook}
 			"blackKnight"	= Just {oldPiece & player=BlackPiece,type=Knight ,sprite=ls.sprites.blackKnight}
-#newPst    = MovePiece(oldPiece.xCord,oldPiece.yCord) mouseUpxCord mouseUpyCord {pst & ls.selectedPiece = newPiece}
-#updatedIo = setWindowLook (newPst.ls.windowId) False (False, look newPst.ls.worldMatrix) newPst.io
-=(nil, closeActiveWindow ({newPst & io = updatedIo}))
+#newPst    = MovePiece(oldPiece.xCord,oldPiece.yCord) mouseUpxCord mouseUpyCord (fromJust newPiece) {pst & ls.selectedPiece = newPiece}
+#soundPst  = playSoundpromotion newPst
+#updatedIo = setWindowLook (soundPst.ls.windowId) False (False, look soundPst.ls.worldMatrix) soundPst.io
+=(nil, closeActiveWindow ({soundPst & io = updatedIo}))
 
 /*__________________The drawing function__________________*/
 paintPiece :: PiecePicture !Point2  *Picture -> *Picture

@@ -52,11 +52,14 @@ fillFunc :: Int Int (*PSt GameState) -> (*PSt GameState)
 //*Takes two Coordinates and fills the Board Accordingly*/
 fillBoardAt :: Int Int *Picture -> *Picture
 
+//*Takes a piece's old coords and new coords and moves it to the new coords*/
+MovePiece :: (Int,Int) Int Int !Piece (*PSt GameState) -> (*PSt GameState)
+
 //*Takes two coordinates and draws the piece over there*/	
-MovePieceFunc :: Int Int (*PSt GameState) -> (*PSt GameState)
+MovePieceFunc :: Int Int !Piece (*PSt GameState) -> (*PSt GameState)
 
 ///*Takes two Coordinates and draws the piece at the selected coordinates (An Aux for the previous function)*/
-renderPieceAt :: Int Int !(Maybe Piece) *Picture -> *Picture
+renderPieceAt :: Int Int !Piece *Picture -> *Picture
 
 /// Function to Completely Update the world using all of the previous functions
 UpdateGST :: Int Int (*PSt GameState) -> (*PSt GameState)
@@ -69,6 +72,6 @@ For further game Optimisation plans:-
 */
 
 
-MovePiece :: (Int,Int) Int Int (*PSt GameState) -> (*PSt GameState)
+
 
 
