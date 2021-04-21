@@ -53,7 +53,7 @@ fillFunc :: Int Int (*PSt GameState) -> (*PSt GameState)
 fillBoardAt :: Int Int *Picture -> *Picture
 
 //*Takes two coordinates and draws the piece over there*/	
-MovePieceFunc :: Int Int !(Maybe Piece) (*PSt GameState) -> (*PSt GameState)
+MovePieceFunc :: Int Int (*PSt GameState) -> (*PSt GameState)
 
 ///*Takes two Coordinates and draws the piece at the selected coordinates (An Aux for the previous function)*/
 renderPieceAt :: Int Int !(Maybe Piece) *Picture -> *Picture

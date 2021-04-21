@@ -111,21 +111,20 @@ getPixelValue (x,y) piece
 *Custom function edits that help with moving pieces
 */
 
+
 /// Function to Completely Update the world
 UpdateGST :: Int Int (*PSt GameState) -> (*PSt GameState)
 UpdateGST mouseUpxCord mouseUpyCord pst=:{ls=gs, io}
-| mouseUpxCord == selectedxCord && selectedyCord == mouseUpyCord = pst
-=lastPst  
+| mouseUpxCord == selectedxCord && selectedyCord == mouseUpyCord 		= pst
+| ((piece.type == Pawn) && ((mouseUpyCord == 7) ||(mouseUpyCord == 0))) = proPst
+= lastPst
 where
-	proPst 		 = promotion mouseUpyCord pst 
-	piece		 = gs.selectedPiece
-	(selectedxCord,selectedyCord) = case piece of 
-										Nothing = (0,0)
-										Just p = (p.xCord,p.yCord)
-	pieceRendered = MovePiece     (selectedxCord,selectedyCord)  mouseUpxCord mouseUpyCord proPst
-	updatedIo     = setWindowLook (pieceRendered.ls.windowId) False (False, look pieceRendered.ls.worldMatrix) pieceRendered.io
-	lastPst       = {pieceRendered & ls.selectedPiece = Nothing,io = updatedIo}
-
+	piece		 				  = fromJust gs.selectedPiece
+	proPst 		 				  = promotion mouseUpxCord mouseUpyCord pst
+	(selectedxCord,selectedyCord) = (piece.xCord,piece.yCord)
+	pieceRendered 				  = MovePiece     (selectedxCord,selectedyCord) mouseUpxCord mouseUpyCord proPst
+	updatedIo     				  = setWindowLook (pieceRendered.ls.windowId) False (False, look pieceRendered.ls.worldMatrix) pieceRendered.io
+	lastPst       				  = {pieceRendered & io = updatedIo}
 
 
 /*Takes oldCoordinates, new Coordinates, and changes the piece's coordinates as well as rendering it in the new place*/
@@ -135,8 +134,9 @@ where
 	piece 		= ls.selectedPiece
 	updatedPst  = updateWorldMatrix (mouseUpxCord, mouseUpyCord) (selectedxCord + selectedyCord * 8) pst 		//Piece is moved in the world matrix
 	erasePiece  = fillFunc mouseUpxCord mouseUpyCord updatedPst 
-	pieceMoved  = MovePieceFunc mouseUpxCord mouseUpyCord piece erasePiece
-	lastPst     = fillFunc selectedxCord selectedyCord pieceMoved
+	pieceMoved  = MovePieceFunc mouseUpxCord mouseUpyCord erasePiece
+	prelastPst  = fillFunc selectedxCord selectedyCord pieceMoved
+	lastPst 	= {prelastPst & ls.selectedPiece = Nothing} 
 
 /*____________Aux Functions__________*/
 //*Takes two Coordinates and a processState and fills the Board in the coordinates with the appropriate color*/
@@ -160,8 +160,8 @@ where
 
 
 //*Takes two coordinates and draws the piece over there (An Aux for the previous function)*/	
-MovePieceFunc :: Int Int !(Maybe Piece) (*PSt GameState) -> (*PSt GameState)
-MovePieceFunc xC yC p pst=:{ls, io} = {pst & io = appWindowPicture (ls.windowId) (renderPieceAt xC yC p) io}
+MovePieceFunc :: Int Int (*PSt GameState) -> (*PSt GameState)
+MovePieceFunc xC yC pst=:{ls, io} = {pst & io = appWindowPicture (ls.windowId) (renderPieceAt xC yC ls.selectedPiece) io}
 
 ///*Takes two Coordinates and draws the piece at the selected coordinates*/
 renderPieceAt :: Int Int !(Maybe Piece) *Picture -> *Picture
