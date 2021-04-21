@@ -13,14 +13,20 @@ where
 
 	
 /// Update Arry function because apparently we cant use the innate function
-updateWorldMatrix :: (Int,Int) Int !(Maybe Piece) GameState -> GameState
-updateWorldMatrix (move,to) originalPos m gs = switched
+updateWorldMatrix :: (Int,Int) Int (*PSt GameState)-> (*PSt GameState)
+updateWorldMatrix (move,to) originalPos pst=:{ls,io} = switched
 where
-	s = updatePiece move to m 
-	moveTo = move + to * 8
-	movedPiece = {gs & worldMatrix = {(\x |x == moveTo = s = a) i \\ a<-:gs.worldMatrix & i<-[0..] }}
-	switched = {movedPiece & worldMatrix = {(\x |x == originalPos = Nothing = a) i \\ a<-:movedPiece.worldMatrix & i<-[0..] }}
+	newPiece	 = updatePiece move to ls.selectedPiece 
+	moveTo   	 = move + to * 8
+	movedPiece   = {pst & ls.worldMatrix = {(\x |x == moveTo = newPiece = a) i \\ a<-:ls.worldMatrix & i<-[0..] }}
+	switched     = {movedPiece & ls.worldMatrix = {(\x |x == originalPos = Nothing = a) i \\ a<-:movedPiece.ls.worldMatrix & i<-[0..] }}
 
+
+//*Takes two coordinates and updates the piece's coordinates accordingly*/
+updatePiece :: Int Int !(Maybe Piece) -> !(Maybe Piece)
+updatePiece xC yC Nothing = Nothing
+updatePiece xC yC (Just p) = Just {p & xCord = xC , yCord = yC}
+ 
 
 	
 

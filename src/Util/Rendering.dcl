@@ -3,11 +3,6 @@ definition module Util.Rendering
 import StdIO, StdEnv, Util.Constants, Util.CostumFunctions
 
 
-/*______Checking if a move is Valid______*/
-
-isValid :: Int (*PSt GameState) -> Bool
-
-
 /*___Main Highlighting Function___*/
 showValidMoves :: (*PSt GameState) ->(*PSt GameState)
 
@@ -62,10 +57,6 @@ MovePieceFunc :: Int Int !(Maybe Piece) (*PSt GameState) -> (*PSt GameState)
 
 ///*Takes two Coordinates and draws the piece at the selected coordinates (An Aux for the previous function)*/
 renderPieceAt :: Int Int !(Maybe Piece) *Picture -> *Picture
-	
-//*Takes two coordinates and updates the piece's coordinates accordingly*/
-updatePiece :: Int Int !(Maybe Piece) -> !(Maybe Piece)
-
 
 /// Function to Completely Update the world using all of the previous functions
 UpdateGST :: Int Int (*PSt GameState) -> (*PSt GameState)
