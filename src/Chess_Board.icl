@@ -9,7 +9,7 @@ import Util.Reading, Util.Event, Util.Constants, Util.CostumFunctions, Util.Rend
 Start:: *World -> *World
 Start world 
 # gs = { turnCount=0,players=initPlayers , worldMatrix = board, selectedPiece = Nothing, windowId = wid, validMoves = initMoves}  		///initial game state (process state)
-= startIO SDI gs (initIO (wid, board) ) [ProcessClose closeProcess] worldFinal
+= startIO MDI gs (initIO (wid, board) ) [ProcessClose closeProcess] worldFinal
 where
 	/*_______ world function + reading sprites________*/
 	(wid ,world1 ) = openId world

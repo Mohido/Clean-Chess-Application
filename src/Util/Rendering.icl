@@ -1,6 +1,6 @@
 implementation module Util.Rendering
 
-import StdEnv, StdIO, Util.Constants, Util.CostumFunctions, Util.Highlights, StdDebug
+import StdEnv, StdIO, Util.Constants, Util.Dialogs, Util.CostumFunctions, Util.Highlights, StdDebug
 
 
 /*______Checking if a move is Valid______*/
@@ -164,11 +164,12 @@ UpdateGST mouseUpxCord mouseUpyCord pst=:{ls=gs, io}
 | mouseUpxCord == selectedxCord && selectedyCord == mouseUpyCord = pst
 =lastPst  
 where
+	propst = promotion mouseUpyCord pst
 	piece = gs.selectedPiece
 	(selectedxCord,selectedyCord) = case piece of 
 										Nothing = (0,0)
 										Just p = (p.xCord,p.yCord)
-	erasePiece = fillFunc mouseUpxCord mouseUpyCord pst			
+	erasePiece = fillFunc mouseUpxCord mouseUpyCord propst			
 	pieceMoved = MovePieceFunc mouseUpxCord mouseUpyCord piece erasePiece
 	fillOver   = fillFunc selectedxCord selectedyCord pieceMoved
 	prelastGs  = updateWorldMatrix (mouseUpxCord, mouseUpyCord) (selectedxCord + selectedyCord * 8) piece gs 
