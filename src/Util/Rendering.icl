@@ -160,16 +160,16 @@ updatePiece xC yC (Just p) = Just {p & xCord = xC , yCord = yC}
 
 /// Function to Completely Update the world
 UpdateGST :: Int Int (*PSt GameState) -> (*PSt GameState)
-UpdateGST mouseUpxCord mouseUpyCord pst=:{ls=gs, io}
+UpdateGST mouseUpxCord mouseUpyCord pst
 | mouseUpxCord == selectedxCord && selectedyCord == mouseUpyCord = pst
 =lastPst  
 where
-	propst = promotion mouseUpyCord pst
+	{ls = gs, io} = promotion mouseUpyCord pst
 	piece = gs.selectedPiece
 	(selectedxCord,selectedyCord) = case piece of 
 										Nothing = (0,0)
 										Just p = (p.xCord,p.yCord)
-	erasePiece = fillFunc mouseUpxCord mouseUpyCord propst			
+	erasePiece = fillFunc mouseUpxCord mouseUpyCord {ls = gs, io}			
 	pieceMoved = MovePieceFunc mouseUpxCord mouseUpyCord piece erasePiece
 	fillOver   = fillFunc selectedxCord selectedyCord pieceMoved
 	prelastGs  = updateWorldMatrix (mouseUpxCord, mouseUpyCord) (selectedxCord + selectedyCord * 8) piece gs 

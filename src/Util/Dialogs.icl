@@ -33,8 +33,8 @@ promotion mouseUpyCord pSt =:{ls = gs, io}
 												
 										   	  ]
 					)*/[ ]
-/*
-					
+
+/*				
 queenFunc :: (.ls , *PSt GameState)	 -> (.ls , *PSt GameState)	
 queenFunc (ls, pst=:{gs , io}) = (ls , {{gs & gs.selectedPiece 
 												= {selectedPiece &
