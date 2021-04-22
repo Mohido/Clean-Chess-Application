@@ -172,11 +172,41 @@ where
 	 					|	not (getPixelValue (x, y) piece.sprite == {r=255,g=0,b=255})]
 
 	
+
+/*Start from x and y and fill toward the end of the rectangle.*/	
+lookRectangle:: !Rectangle !Board *Picture -> *Picture
+lookRectangle rec=:{corner1, corner2} board pic 
+# (xStartCord, yStartCord) = ( toInt ((toReal corner1.x / toReal TILE_SIZE) - 0.5) , toInt ((toReal corner1.y / toReal TILE_SIZE) - 0.5))
+# (xEndCord, yEndCord) = ( toInt ((toReal corner1.x / toReal TILE_SIZE) + 0.5) , toInt ((toReal corner1.y / toReal TILE_SIZE) + 0.5))
+= clearRect {corner1 = {x = xStartCord * TILE_SIZE, y = yStartCord* TILE_SIZE} 
+			, corner2 = {x = xEndCord * TILE_SIZE, y = yEndCord* TILE_SIZE}  } pic //[fillBoardAt \\ x <- [xStartCord .. xEndCord] , y <- [yStartCord .. yEndCord] ] 
+
+
+
+
 /**
 For further game Optimisation plans:-
+
 *	fillBoardAt :: !Rectangle !Colour *Picture -> *Picture
 *	clearAt :: !Rectangle !Colour *Picture -> *Picture
 *	paintPiecesAt :: !Rectangle !Board *Picture -> *Picture
 */
+
+/**
+* Clear a part of the screen
+*/
+clearRect :: Rectangle Colour *Picture -> *Picture
+clearRect rec White pic = unfill rec pic
+clearRect rec c_col pic
+# pic = setPenColour c_col pic
+= fill rec pic
+
+
+
+
+
+
+
+
 
 
