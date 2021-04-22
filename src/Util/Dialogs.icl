@@ -14,8 +14,9 @@ promotion mouseUpxCord mouseUpyCord pst =:{ls = gs , io}
 		open_dialog_promo_white :: (*PSt GameState) -> (ErrorReport, *PSt GameState)
 		open_dialog_promo_white pst=:{ls, io} 
 			# (okId,pst) = openId pst
-			= (openDialog undef (dialog ls okId) pst)
-		dialog ls okId = Dialog "Choose one for Promotion"
+			# newio 	 = disableWindowMouse ls.windowId pst.io 
+			= (openDialog undef (dialog ls okId) {pst& io = newio})
+		dialog ls okId = Dialog "Choose a piece for Promotion"
 					( 	  CustomButtonControl {w=64,h=64} (\ _ _ = paintPiece ls.sprites.whiteQueen {x = 0, y = 0} ) 	[ControlFunction (promotePawn mouseUpxCord mouseUpyCord "whiteQueen")]
 					  :+: CustomButtonControl {w=64,h=64} (\ _ _ = paintPiece ls.sprites.whiteBishop {x = 0, y = 0} ) 	[ControlFunction (promotePawn mouseUpxCord mouseUpyCord "whiteBishop")]
 					  :+: CustomButtonControl {w=64,h=64} (\ _ _ = paintPiece ls.sprites.whiteRook {x = 0, y = 0} ) 	[ControlFunction (promotePawn mouseUpxCord mouseUpyCord "whiteRook")]
@@ -25,8 +26,9 @@ promotion mouseUpxCord mouseUpyCord pst =:{ls = gs , io}
 		open_dialog_promo_black :: (*PSt GameState) -> (ErrorReport, *PSt GameState)
 		open_dialog_promo_black pst=:{ls, io} 
 			# (okId,pst) = openId pst
-			= (openDialog undef (dialog1 ls okId) pst)
-		dialog1 ls okId = Dialog "Choose one for Promotion"
+			# newio 	 = disableWindowMouse ls.windowId pst.io 
+			= (openDialog undef (dialog1 ls okId) {pst& io = newio})
+		dialog1 ls okId = Dialog "Choose a piece for Promotion"
 					( 	  CustomButtonControl {w=64,h=64} (\ _ _ = paintPiece ls.sprites.blackQueen {x = 0, y = 0} ) 	[ControlFunction (promotePawn mouseUpxCord mouseUpyCord "blackQueen")]
 					  :+: CustomButtonControl {w=64,h=64} (\ _ _ = paintPiece ls.sprites.blackBishop {x = 0, y = 0} ) 	[ControlFunction (promotePawn mouseUpxCord mouseUpyCord "blackBishop")]
 					  :+: CustomButtonControl {w=64,h=64} (\ _ _ = paintPiece ls.sprites.blackRook {x = 0, y = 0} ) 	[ControlFunction (promotePawn mouseUpxCord mouseUpyCord "blackRook")]
@@ -50,7 +52,8 @@ promotePawn  mouseUpxCord mouseUpyCord choice (nil , pst=:{ls, io})
 #newPst    = MovePiece(oldPiece.xCord,oldPiece.yCord) mouseUpxCord mouseUpyCord (fromJust newPiece) {pst & ls.selectedPiece = newPiece}
 #soundPst  = playSoundpromotion newPst
 #updatedIo = setWindowLook (soundPst.ls.windowId) False (False, look soundPst.ls.worldMatrix) soundPst.io
-=(nil, closeActiveWindow ({soundPst & io = updatedIo}))
+#lastIo	   = enableWindowMouse soundPst.ls.windowId updatedIo
+=(nil, closeActiveWindow ({soundPst & io = lastIo}))
 
 /*__________________The drawing function__________________*/
 paintPiece :: PiecePicture !Point2  *Picture -> *Picture
