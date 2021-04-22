@@ -51,7 +51,7 @@ promotePawn  mouseUpxCord mouseUpyCord choice (nil , pst=:{ls, io})
 			"blackKnight"	= Just {oldPiece & player=BlackPiece,type=Knight ,sprite=ls.sprites.blackKnight}
 #newPst    = MovePiece(oldPiece.xCord,oldPiece.yCord) mouseUpxCord mouseUpyCord (fromJust newPiece) {pst & ls.selectedPiece = newPiece}
 #soundPst  = playSoundpromotion newPst
-#updatedIo = setWindowLook (soundPst.ls.windowId) False (False, look soundPst.ls.worldMatrix) soundPst.io
+#updatedIo = setWindowLook (soundPst.ls.windowId) False (False, look (False,soundPst.ls.worldMatrix)) soundPst.io
 #lastIo	   = enableWindowMouse soundPst.ls.windowId updatedIo
 =(nil, closeActiveWindow ({soundPst & io = lastIo}))
 

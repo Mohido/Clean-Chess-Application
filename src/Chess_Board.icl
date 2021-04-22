@@ -79,15 +79,44 @@ where
 //____________ Initializing the window area
 
 initIO :: (!Id, {!(Maybe Piece)}) (PSt GameState) -> (PSt GameState)
-initIO w_inits=:(wid, preBoard) pst
-# (errorM, pst) = openWindow undef (window) pst
-= pst
+initIO w_inits=:(wid, preBoard) pst=:{ls}
+# (errorM, newPst) = openWindow undef (window) pst
+//# finalPst = {newPst & io = setWindowLook wid True (True,look (False,ls.worldMatrix)) newPst.io } 
+= newPst
 where
 	window = Window "Title" NilLS
 								[	
 									WindowId wid,
 									WindowClose quit, 
+									WindowActivate updateWindowLook, /// Changing the look of the window once it is activated...
 									WindowViewSize {w = 8*TILE_SIZE, h = 8*TILE_SIZE}, 	/// defining the size of the window.
-									WindowLook False (look preBoard) ,					/// This will take the state and update state away.
-									WindowMouse m_filter Able mouseHandler				/// Funcitons in Even.dcl. It handles mouse events
+									WindowMouse m_filter Able mouseHandler,			/// Funcitons in Even.dcl. It handles mouse events
+									WindowInit updateWindowLook
 								]
+	where 
+		updateWindowLook :: (.ls, *PSt GameState) -> (.ls, *PSt GameState)
+		updateWindowLook (nil, upst) 
+		# (nil, last)  = fullWindowLook (nil, upst) 
+		= (nil, {last & io = setWindowLook last.ls.windowId False (False, look (False,last.ls.worldMatrix)) last.io } )
+		
+		fullWindowLook :: (.ls, *PSt GameState) -> (.ls, *PSt GameState)
+		fullWindowLook (nil, upst) = (nil, {upst & io = setWindowLook upst.ls.windowId True (False, look (True,upst.ls.worldMatrix)) upst.io } )
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

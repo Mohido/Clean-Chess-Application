@@ -25,17 +25,84 @@ showValidMoves pst=:{ls, io} =
 /**
 * Painting the window's context. Once it critically needs updating (on creation and resizing)
 */
-look :: !Board SelectState UpdateState *Picture -> *Picture
-look board _ {oldFrame, newFrame, updArea} pic
-# newFrameSize	= rectangleSize newFrame 				/// The new Window rectangle size
-# oldFrameSize 	= rectangleSize oldFrame 				/// The old Window rectangle size
-| newFrameSize.w > 8*TILE_SIZE || 	
-		newFrameSize.h > 8*TILE_SIZE  = pic 			///If window resizing is not impacting the main area of the game don't redraw the whole game.
-# b_col_1 = White										///Board first colour
-# b_col_2 = RGB {r =130, g=63, b=59} 					///Board sec.. colour
-= fillPieces board (fillBoard b_col_1 (clear b_col_2 pic))
+look :: (!Bool,!Board) SelectState UpdateState *Picture -> *Picture
+look (all, board) _ {oldFrame, newFrame, updArea} pic
+| all = fillPieces board (fillBoard b_col_1 (clear b_col_2 pic))
+# topLeft     = {x = min oldFrame.corner2.x newFrame.corner2.x,
+			 		y = min oldFrame.corner1.y newFrame.corner1.y} 				//TopLeft of the right portion
+# bottomRight = {x = max oldFrame.corner2.x newFrame.corner2.x,
+			 	 	y = max oldFrame.corner2.y newFrame.corner2.y} 			//BottomRight of the right portion
+# rightPortion = (lookRectangle {corner1 = topLeft, corner2 = bottomRight} board pic)  // filling right portion of the screen
+# topLeft = {x = min oldFrame.corner1.x newFrame.corner1.x,	
+			 		y = min oldFrame.corner2.y newFrame.corner2.y}							/// Top left of bottom version
+# bottomRight = {x = min oldFrame.corner2.x newFrame.corner2.x,
+			 		y = max oldFrame.corner2.y newFrame.corner2.y}							/// BottomRight of the bottom portion
+# bottomPortion = (lookRectangle {corner1 = topLeft, corner2 = bottomRight} board rightPortion) 
+= bottomPortion // it contains teh right portion as well .......................... here ^ ......
+where
+	b_col_1 = White															///Board first colour
+	b_col_2 = RGB {r =130, g=63, b=59} 
+			 	 
 
 
+/*Start from x and y and fill toward the end of the rectangle.*/	
+lookRectangle:: !Rectangle !Board *Picture -> *Picture
+lookRectangle rec=:{corner1, corner2} board pic 
+= fillPiecesFromTo (xStartCord, yStartCord) (xEndCord, yEndCord) board (tileIt (clearedBoard pic)) /* Clearing => Drawing Tiles => Drawing pieces*/
+where
+	b_col_1 = White										
+	b_col_2 = RGB {r =130, g=63, b=59}
+	clearedBoard pic = (clearRect canvas b_col_2 pic)					/// clearing
+	tileIt pic = fillRect (xStartCord, yStartCord) (xEndCord, yEndCord) b_col_1 pic /// drawing tiles
+	(xStartCord, yStartCord) = ( toInt ((toReal corner1.x / toReal TILE_SIZE) - 0.5) , toInt ((toReal corner1.y / toReal TILE_SIZE) - 0.5)) 	/// to Cooordinates from top left wiith flooring
+	(xEndCord, yEndCord) = ( toInt ((toReal corner2.x / toReal TILE_SIZE) + 0.4) , toInt ((toReal corner2.y / toReal TILE_SIZE) + 0.4))			/// to cordinates from the bottom right with ceiling
+	canvas = {  corner1 = {x = xStartCord * TILE_SIZE, y = yStartCord* TILE_SIZE} 
+			, corner2 = {x = xEndCord * TILE_SIZE, y = yEndCord* TILE_SIZE} 
+			} /* Passed to the clearRect function*/
+
+
+/**
+* Clear a part of the screen
+*/
+clearRect :: Rectangle Colour *Picture -> *Picture
+clearRect rec White pic = unfill rec pic
+clearRect rec c_col pic
+# pic = setPenColour c_col pic
+= fill rec pic
+
+
+/**
+* Filling part of the board with tiles. Takes Cordinate system!
+*/
+fillRect :: (!Int, !Int) (!Int, !Int) Colour *Picture -> *Picture
+fillRect (xStartCord, yStartCord) (xEndCord, yEndCord) c_col pic 
+# pic = setPenColour c_col pic
+= foldr fillTile pic pix_cord_list
+where
+	pix_cord_list = [ {x=xcord*TILE_SIZE, y=ycord*TILE_SIZE} \\ xcord <- [xStartCord .. min xEndCord 7] , ycord <- [yStartCord .. min 7 yEndCord] 
+						| 
+					(xcord rem 2 == 0 && ycord rem 2 == 0) || (xcord rem 2 <>  0 && ycord rem 2 <> 0)]
+	
+	/*Op*/
+	fillTile :: !Point2 -> *Picture -> *Picture
+	fillTile pix_cord = fillAt pix_cord tile
+
+
+/**	
+* fill the board with pieces starting from the given coordinates till the last given coordinate
+*/
+fillPiecesFromTo :: (Int, Int) (Int, Int) !Board *Picture -> *Picture
+fillPiecesFromTo (xStartCord, yStartCord) (xEndCord, yEndCord) board pic 
+| xStartCord > 7 || yStartCord > 7 = pic
+= foldr renderPiece pic pieces
+where
+	pieces = [ board.[xcord + ycord*8] \\ xcord <- [xStartCord .. min (xEndCord-1) 7], ycord <- [yStartCord .. min (yEndCord - 1) 7] ]
+ 	testing = trace_n (toString (length pieces) ) pieces
+
+
+
+
+/// __________________ LEGACY BOARD RENDERING _____________________
 /**
 * clear the whole picture with the given colour
 */
@@ -62,6 +129,8 @@ where
 	/*Op*/
 	fillTile :: !Point2 -> *Picture -> *Picture
 	fillTile pix_cord = fillAt pix_cord tile
+	
+	
 /**	
 * fill the board with pieces.
 */
@@ -74,7 +143,7 @@ where
 	#! pic = renderPiece board.[ind] pic
 	= fillPiecesAux board pic (ind+1)
 
-
+/// ___________________________________________ PIECE RENDERING AREA 
 
 /**
 * Renders a specific piece.
@@ -95,6 +164,16 @@ where
 
 
 
+/*UNNEEDED FUNCTION SINCE THE RENDER FUNCTION UBOVE IT RENDERS ACCORDING TO THE SAVED COORDINATES IN THE PIECE ITSELF*/
+///*Takes two Coordinates and draws the piece at the selected coordinates*/
+renderPieceAt :: Int Int !Piece *Picture -> *Picture
+renderPieceAt xC yC piece pic = foldr fillPixel pic pixelsValues
+where
+	 pixelsValues = [ (y + xC * TILE_SIZE, x + TILE_SIZE * yC, getPixelValue (x, y) piece.sprite) 
+	 					\\  x <- [0..TILE_SIZE] ,y <- [0..TILE_SIZE] 
+	 					|	not (getPixelValue (x, y) piece.sprite == {r=255,g=0,b=255})]
+
+
 /**
 * Gets the pixel value related to the TILE_SIZE pixel coordinate system from
 * the piece sprite
@@ -107,10 +186,18 @@ getPixelValue (x,y) piece
 | index >= size piece.arrayOfPixels = {r=0, g=0, b=0}
 = piece.arrayOfPixels.[index]
 
+
+
+
+
+
+
+// ______________________ UPDATING LOGIC (HALF RENDERING HALF LOGIC UPDATING)
+
+
 /*
 *Custom function edits that help with moving pieces
 */
-
 
 /// Function to Completely Update the world
 UpdateGST :: Int Int (*PSt GameState) -> (*PSt GameState)
@@ -123,7 +210,7 @@ where
 	proPst 		 				  = promotion mouseUpxCord mouseUpyCord pst
 	(selectedxCord,selectedyCord) = (piece.xCord,piece.yCord)
 	pieceRendered 				  = MovePiece     (selectedxCord,selectedyCord) mouseUpxCord mouseUpyCord piece proPst
-	updatedIo     				  = setWindowLook (pieceRendered.ls.windowId) False (False, look pieceRendered.ls.worldMatrix) pieceRendered.io
+	updatedIo     				  = setWindowLook (pieceRendered.ls.windowId) False (False, look (False,pieceRendered.ls.worldMatrix)) pieceRendered.io
 	lastPst       				  = {pieceRendered & io = updatedIo}
 
 
@@ -137,6 +224,8 @@ where
 	pieceMoved  = MovePieceFunc mouseUpxCord mouseUpyCord piece erasePiece
 	prelastPst  = fillFunc selectedxCord selectedyCord pieceMoved
 	lastPst 	= {prelastPst & ls.selectedPiece = Nothing} 
+
+
 
 /*____________Aux Functions__________*/
 //*Takes two Coordinates and a processState and fills the Board in the coordinates with the appropriate color*/
@@ -163,44 +252,8 @@ where
 MovePieceFunc :: Int Int !Piece (*PSt GameState) -> (*PSt GameState)
 MovePieceFunc xC yC piece pst=:{ls, io} = {pst & io = appWindowPicture (ls.windowId) (renderPieceAt xC yC piece) io}
 
-///*Takes two Coordinates and draws the piece at the selected coordinates*/
-renderPieceAt :: Int Int !Piece *Picture -> *Picture
-renderPieceAt xC yC piece pic = foldr fillPixel pic pixelsValues
-where
-	 pixelsValues = [ (y + xC * TILE_SIZE, x + TILE_SIZE * yC, getPixelValue (x, y) piece.sprite) 
-	 					\\  x <- [0..TILE_SIZE] ,y <- [0..TILE_SIZE] 
-	 					|	not (getPixelValue (x, y) piece.sprite == {r=255,g=0,b=255})]
 
 	
-
-/*Start from x and y and fill toward the end of the rectangle.*/	
-lookRectangle:: !Rectangle !Board *Picture -> *Picture
-lookRectangle rec=:{corner1, corner2} board pic 
-# (xStartCord, yStartCord) = ( toInt ((toReal corner1.x / toReal TILE_SIZE) - 0.5) , toInt ((toReal corner1.y / toReal TILE_SIZE) - 0.5))
-# (xEndCord, yEndCord) = ( toInt ((toReal corner1.x / toReal TILE_SIZE) + 0.5) , toInt ((toReal corner1.y / toReal TILE_SIZE) + 0.5))
-= clearRect {corner1 = {x = xStartCord * TILE_SIZE, y = yStartCord* TILE_SIZE} 
-			, corner2 = {x = xEndCord * TILE_SIZE, y = yEndCord* TILE_SIZE}  } pic //[fillBoardAt \\ x <- [xStartCord .. xEndCord] , y <- [yStartCord .. yEndCord] ] 
-
-
-
-
-/**
-For further game Optimisation plans:-
-
-*	fillBoardAt :: !Rectangle !Colour *Picture -> *Picture
-*	clearAt :: !Rectangle !Colour *Picture -> *Picture
-*	paintPiecesAt :: !Rectangle !Board *Picture -> *Picture
-*/
-
-/**
-* Clear a part of the screen
-*/
-clearRect :: Rectangle Colour *Picture -> *Picture
-clearRect rec White pic = unfill rec pic
-clearRect rec c_col pic
-# pic = setPenColour c_col pic
-= fill rec pic
-
 
 
 

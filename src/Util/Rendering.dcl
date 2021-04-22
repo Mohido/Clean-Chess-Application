@@ -10,7 +10,7 @@ showValidMoves :: (*PSt GameState) ->(*PSt GameState)
 /**
 * Painting the window's context. Once it critically needs updating (on creation and resizing)
 */
-look :: !Board SelectState UpdateState *Picture -> *Picture
+look :: (!Bool,!Board) SelectState UpdateState *Picture -> *Picture
 
 
 /**
