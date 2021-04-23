@@ -46,3 +46,32 @@ instance == RGBColour
 where
 	(==) x y = x.r == y.r && x.b == y.b && x.g == y.g
 	(==) _ _ = False
+	
+instance == Piece
+where
+	(==) p1 p2 = ( p1.xCord == p2.xCord && p1.yCord == p2.yCord && 
+				   p1.player == p2.player && p1.type == p2.type )
+				   
+instance toString ChessType 
+where
+	toString Rook = "Rook"
+	toString Knight = "Knight" 
+	toString Bishop = "Bishop" 
+	toString Queen = "Queen" 
+	toString King = "King" 
+	toString Pawn = "Pawn" 
+	toString NotPiece = "Not a Piece" 
+	
+	
+instance toString PieceColour 
+where
+	toString BlackPiece = "Black Piece"
+	toString WhitePiece = "White Piece" 
+	toString ColourError = "Colour Error"
+	
+instance toString Piece 
+where
+	toString p = "Piece: Cords = (" +++ toString p.xCord 
+    					   +++ ", " +++ toString p.yCord +++ ") \n"
+    					   +++ "Color: " +++ toString p.player
+    					   +++ "\nType: " +++ toString p.type 

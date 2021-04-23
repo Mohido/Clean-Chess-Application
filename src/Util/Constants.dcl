@@ -52,6 +52,15 @@ instance == RGBColour
 	type:: ChessType,
 	sprite:: PiecePicture
 	}
+	
+instance == Piece
+	
+instance toString ChessType 
+
+instance toString PieceColour 
+
+instance toString Piece 
+
 
 :: Player = { colour 		 :: PieceColour
 			, castleLeft 	 :: Bool
