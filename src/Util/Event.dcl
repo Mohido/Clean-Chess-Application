@@ -1,7 +1,7 @@
 definition module Util.Event
 
 import StdEnv, StdIO, Util.Constants
-
+import Util.GameOverFunctions
 /// handling mouse events
 mouseHandler :: MouseState (.ls, *PSt GameState) -> (.ls,*PSt GameState)
 

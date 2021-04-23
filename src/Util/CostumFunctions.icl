@@ -29,3 +29,5 @@ updatePiece xC yC Nothing = Nothing
 updatePiece xC yC (Just p) = Just {p & xCord = xC , yCord = yC}
  
 
+
+

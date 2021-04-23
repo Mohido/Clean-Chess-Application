@@ -2,7 +2,7 @@ implementation module Util.Event
 
 import StdEnv, StdIO, StdDebug, Util.Constants, Util.Rendering, Util.CostumFunctions, Util.Dialogs, Util.Sounds
 
-
+import Util.GameOverFunctions
 
 
 ///____________ Mouse Handling events functions_____________
