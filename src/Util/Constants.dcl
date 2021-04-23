@@ -53,29 +53,13 @@ instance == RGBColour
 	sprite:: PiecePicture
 	}
 	
+instance == Piece
 	
 instance toString ChessType 
-where
-	toString Rook = "Rook"
-	toString Knight = "Knight" 
-	toString Bishop = "Bishop" 
-	toString Queen = "Queen" 
-	toString King = "King" 
-	toString Pawn = "Pawn" 
-	toString NotPiece = "Not a Piece" 
-	
+
 instance toString PieceColour 
-where
-	toString BlackPiece = "Black Piece"
-	toString WhitePiece = "White Piece" 
-	toString ColourError = "Colour Error" 
 
 instance toString Piece 
-where
-	toString p = "Piece: Cords = (" +++ toString p.xCord 
-    					   +++ ", " +++ toString p.yCord +++ ") \n"
-    					   +++ "Color: " +++ toString p.player
-    					   +++ "\nType: " +++ toString p.type 
 
 
 :: Player = { colour 		 :: PieceColour
