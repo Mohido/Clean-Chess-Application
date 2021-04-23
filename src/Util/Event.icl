@@ -26,8 +26,8 @@ where
 mouseHandler (MouseUp hitPoint _) (nil, pst=:{ls=gs, io}) 
 | hitPoint.x > TILE_SIZE*TILE_SIZE || hitPoint.y > TILE_SIZE*TILE_SIZE = (nil, deHighlight) // if the mouseUp event happens out of the picture Context
 |(isNothing gs.selectedPiece) = (nil,pst)													// seeing if a piece is selected currently, if not, do nothing 
-| gs.validMoves.[index] =  (nil, playSoundPst)				   	// if a move is valid, update
-= (nil, {deHighlight & ls.selectedPiece = Nothing})											// if nothing then just dehighlight and move on
+| gs.validMoves.[index] =  (nil, pstReturn)				   	// if a move is valid, update
+= (nil, {deHighlight & ls.selectedPiece = Nothing} )											// if nothing then just dehighlight and move on
 where
 	index 		 = mouseUpxCord + mouseUpyCord * 8
 	mouseUpxCord = (hitPoint.x / TILE_SIZE)													/// pixel to tile coords system
@@ -38,6 +38,8 @@ where
 	playSoundPst = case deHighlight.ls.worldMatrix.[index] of 								/// playing sounds when the pieces move
 					 Nothing 		=  playSoundmove changedTurns
 					 Just something =  playSoundCapture changedTurns
+	(isCheck, pstReturn) = isUnderCheck playSoundPst
+	
 
 
 /*________Other Mouse Events______________ */
