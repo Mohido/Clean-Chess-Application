@@ -15,7 +15,7 @@ where
 	
 
 /// Update Arry function because apparently we cant use the innate function
-updateWorldMatrix :: (Int,Int) Int (*PSt GameState)-> (*PSt GameState)
+updateWorldMatrix :: (Int,Int) Int (*PSt GameState) -> (*PSt GameState)
 updateWorldMatrix (move,to) originalPos pst=:{ls,io} = switched
 where
 	newPiece	 = updatePiece move to ls.selectedPiece 
