@@ -12,7 +12,7 @@ showValidMoves realtime pst=:{ls, io} =
 					Just p = case p.type of
 								 Rook   = highLightRook realtime pst p 
 								 Bishop = HighlightBishop  pst p
-								 Pawn   = highLightPawn  pst p
+								 Pawn   = highLightPawn realtime pst p
 								 Knight = HighlightKnight realtime pst p
 								 Queen  = HighlightQueen  pst p
 								 King   = HighlightKing pst p
