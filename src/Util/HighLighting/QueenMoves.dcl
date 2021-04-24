@@ -5,4 +5,4 @@ from StdFunc import seq
 
 
 
-HighlightQueen :: (*PSt GameState) !Piece -> (*PSt GameState)
+HighlightQueen :: Bool (*PSt GameState) !Piece -> (*PSt GameState)

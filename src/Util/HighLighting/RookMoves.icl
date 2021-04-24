@@ -29,17 +29,9 @@ goLeftRook highlight xC yC p pst=:{ls=gs, io}
 | isNothing gs.worldMatrix.[xC + yC * 8] = case highlight of 
 												True = goLeftRook highlight (xC-1) yC p {orig_Pst & io = appWindowPicture (gs.windowId) ((hiliteAt point tile)) io , ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}}
 												False = goLeftRook highlight (xC-1) yC p {orig_Pst & ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}}
-# piece = fromJust gs.worldMatrix.[xC + yC * 8]
 = case highlight of
 		True = {orig_Pst & io = appWindowPicture (gs.windowId) ((hiliteAt point tile)) io , ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}} // if not the same piece Highlight and stop
 		False = {orig_Pst & ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}} // if not the same piece Highlight and stop
-
-/*case (piece.player == p.player) of
-					False = case highlight of
-							True = {orig_Pst & io = appWindowPicture (gs.windowId) ((hiliteAt point tile)) io , ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}} // if not the same piece Highlight and stop
-							False = {orig_Pst & ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}} // if not the same piece Highlight and stop
-					//True = orig_Pst
-					*/
 where
 	point = {x = xC * TILE_SIZE , y = yC * TILE_SIZE}
 					
@@ -61,13 +53,6 @@ goRightRook highlight xC yC p pst=:{ls=gs, io}
 = case highlight of 
 		True = {orig_Pst & io = appWindowPicture (gs.windowId) ((hiliteAt point tile)) io , ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}} // if not the same piece Highlight and stop
 		False = {orig_Pst & ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}} // if not the same piece Highlight and stop
-
-/*case (piece.player == p.player) of 
-					False = case highlight of 
-								True = {orig_Pst & io = appWindowPicture (gs.windowId) ((hiliteAt point tile)) io , ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}} // if not the same piece Highlight and stop
-								False = {orig_Pst & ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}} // if not the same piece Highlight and stop
-					True = orig_Pst
-	*/
 where
 	point = {x = xC * TILE_SIZE , y = yC * TILE_SIZE}
 
@@ -91,15 +76,6 @@ goForwardRook highlight xC yC p pst=:{ls=gs, io}
 = case highlight of
 	True = {orig_Pst & io = appWindowPicture (gs.windowId) ((hiliteAt point tile)) io , ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}} // if not the same piece Highlight and stop
 	False = {orig_Pst & ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}} // if not the same piece Highlight and stop
-
-
-/*case (piece.player == p.player) of 
-					False = case highlight of
-								True = {orig_Pst & io = appWindowPicture (gs.windowId) ((hiliteAt point tile)) io , ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}} // if not the same piece Highlight and stop
-								False = {orig_Pst & ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}} // if not the same piece Highlight and stop
-					True = orig_Pst
-					
-					*/
 where
 	point = {x = xC * TILE_SIZE , y = yC * TILE_SIZE}
 
@@ -121,14 +97,6 @@ goBackwardRook highlight xC yC p pst=:{ls=gs, io}
 = case highlight of 
 	True = {orig_Pst & io = appWindowPicture (gs.windowId) ((hiliteAt point tile)) io , ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}} // if not the same piece Highlight and stop
 	False = {orig_Pst & ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}} // if not the same piece Highlight and stop
-
-
-/* case (piece.player == p.player) of 
-					False = case highlight of 
-							True = {orig_Pst & io = appWindowPicture (gs.windowId) ((hiliteAt point tile)) io , ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}} // if not the same piece Highlight and stop
-							False = {orig_Pst & ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}} // if not the same piece Highlight and stop
-					True = orig_Pst
-*/
 where
 	point = {x = xC * TILE_SIZE , y = yC * TILE_SIZE}									
 
