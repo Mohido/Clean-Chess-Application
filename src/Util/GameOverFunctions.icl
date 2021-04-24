@@ -19,8 +19,15 @@ isUnderCheck colour board
 getCriticalPieces :: PieceColour Board -> [Piece]
 getCriticalPieces colour board
 # king_p = searchKing board colour
-= backtrace king_p board
+# pieces_list = backtrace king_p board
+= trace_n (printPieces pieces_list)  pieces_list 
 where
+	///for testing and debuging 
+	printPieces :: [Piece] -> String
+	printPieces [] = ""
+	printPieces [p:rest] = toString p +++ printPieces rest
+	
+	
 	searchKing :: !Board !PieceColour -> Piece
 	searchKing board colour = searchKingAux board colour 0
 	where
