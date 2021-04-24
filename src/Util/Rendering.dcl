@@ -4,7 +4,7 @@ import StdIO, StdEnv, Util.Constants, Util.CostumFunctions
 
 
 /*___Main Highlighting Function___*/
-showValidMoves :: (*PSt GameState) ->(*PSt GameState)
+showValidMoves :: Bool (*PSt GameState) ->(*PSt GameState)
 
 
 /**

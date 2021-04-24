@@ -19,7 +19,7 @@ where
 	currentColor = gs.players.[gs.turnCount].colour			/// Current turn colour
 	newGS 		 = {gs & selectedPiece = piece}				/// new game-state
 	newPST 		 = {pst & ls=newGS}						    /// updating process state with new GameState
-	finalPst 	 = showValidMoves newPST					/// The last pst to be processed 
+	finalPst 	 = showValidMoves True newPST					/// The last pst to be processed 
 	
 	
 /*________Mouse Up______________ */
@@ -32,7 +32,7 @@ where
 	index 		 = mouseUpxCord + mouseUpyCord * 8
 	mouseUpxCord = (hitPoint.x / TILE_SIZE)													/// pixel to tile coords system
 	mouseUpyCord = (hitPoint.y / TILE_SIZE)													/// pixel to tile coords system
-	deHighlight  = showValidMoves pst 														/// Dehighlight when the mouse goes up
+	deHighlight  = showValidMoves True pst 														/// Dehighlight when the mouse goes up
 	editedPst    = UpdateGST mouseUpxCord mouseUpyCord deHighlight							/// move the piece and update the gameState 
 	changedTurns = {editedPst & ls.turnCount = (editedPst.ls.turnCount + 1) rem 2}			/// take the edited state and update the turns
 	playSoundPst = case deHighlight.ls.worldMatrix.[index] of 								/// playing sounds when the pieces move

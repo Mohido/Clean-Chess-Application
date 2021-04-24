@@ -5,16 +5,16 @@ import StdEnv, StdIO, Util.Constants, Util.CostumFunctions, Util.Highlights, Uti
 
 /*Main Highlighting Function*/
 
-showValidMoves :: (*PSt GameState) ->(*PSt GameState)
-showValidMoves pst=:{ls, io} =
+showValidMoves :: Bool (*PSt GameState) ->(*PSt GameState)
+showValidMoves realtime pst=:{ls, io} =
 					case ls.selectedPiece of
 					Nothing = pst
 					Just p = case p.type of
-								 Rook   = highLightRook pst p 
-								 Bishop = HighlightBishop pst p
-								 Pawn   = highLightPawn pst p
-								 Knight = HighlightKnight pst p
-								 Queen  = HighlightQueen pst p
+								 Rook   = highLightRook realtime pst p 
+								 Bishop = HighlightBishop  pst p
+								 Pawn   = highLightPawn  pst p
+								 Knight = HighlightKnight  pst p
+								 Queen  = HighlightQueen  pst p
 								 King   = HighlightKing pst p
 								
 								
