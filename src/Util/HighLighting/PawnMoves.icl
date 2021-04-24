@@ -32,6 +32,8 @@ moveForwardPawn hightLight xC yC p pst=:{ls, io}
 
 moveForwardPawnAux_b :: Bool Int Int !Piece (*PSt GameState)-> (*PSt GameState)
 moveForwardPawnAux_b highLight xC yC p pst=:{ls = gs , io}
+| yC < 0 || yC > 7 = pst
+| not (isNothing gs.worldMatrix.[xC + yC * 8]) && (fromJust gs.worldMatrix.[xC + yC * 8]).player == p.player = pst
 # updatedPst = updateWorldMatrix (xC,yC) (p.xCord + p.yCord * 8) pst   // update the world matrix
 # (game_s , updatedPst2) = getGameState updatedPst					   // get the new gamestate of the world
 # isChecked = isUnderCheck p.player game_s.worldMatrix  			   // check if there is a check in the new world matrix
@@ -59,6 +61,8 @@ where
 
 moveForwardPawnAux_w :: Bool Int Int !Piece (*PSt GameState)-> (*PSt GameState)
 moveForwardPawnAux_w highLight xC yC p pst=:{ls = gs, io}
+| yC < 0 || yC > 7 = pst
+| not (isNothing gs.worldMatrix.[xC + yC * 8]) && (fromJust gs.worldMatrix.[xC + yC * 8]).player == p.player = pst
 # updatedPst = updateWorldMatrix (xC,yC) (p.xCord + p.yCord * 8) pst   // update the world matrix
 # (game_s , updatedPst2) = getGameState updatedPst					   // get the new gamestate of the world
 # isChecked = isUnderCheck p.player game_s.worldMatrix  			   // check if there is a check in the new world matrix

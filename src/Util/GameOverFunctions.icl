@@ -17,15 +17,15 @@ isGameOver p_colour pst=:{ls}
 = searchValidMoves pieces_list pst
 where
 	searchValidMoves:: [(Maybe Piece)] (*PSt GameState) -> (Bool, (*PSt GameState) )
-	searchValidMoves [] pst = (True, pst)
+	searchValidMoves [] pst = trace_n "\n" (True, pst)
 	searchValidMoves [p:rest] pst=:{ls=gs}
 	# tempPst = {pst & ls = {gs & selectedPiece = p}}
 	# validPst = showValidMoves False tempPst
 	# (game_s, validPst) = getGameState validPst
 	# foundValid = or [ move \\ move <-: game_s.validMoves]
 	# orig_pst = {validPst & ls = gs}
-	| foundValid = (False, orig_pst) /// game not over
-	= searchValidMoves rest orig_pst
+	| foundValid = trace_n ( "Checking: " +++ toString (fromJust p) +++ "\n") (False, orig_pst) /// game not over
+	=trace_n ( "Checking: " +++ toString (fromJust p)) (searchValidMoves rest orig_pst)
 
 
 
@@ -40,19 +40,12 @@ isUnderCheck colour board
 = isCheck
 
 
-
-
-
-
-
-
-
 //Get Pieces that are doing a check on the king of the given index player
 getCriticalPieces :: PieceColour Board -> [Piece]
 getCriticalPieces colour board
 # king_p = searchKing board colour
 # pieces_list = backtrace king_p board
-= trace_n (printPieces pieces_list)  pieces_list 
+= pieces_list 
 where
 	///for testing and debuging 
 	printPieces :: [Piece] -> String
@@ -97,9 +90,11 @@ where
 	# index = xCord + yCord * 8
 	| isNothing board.[index] = backtrace_North king_p (xCord, yCord - 1) board
 	| (fromJust board.[index]).player == king_p.player = []
+	# piece = (fromJust board.[index])
 	=  case (fromJust board.[index]).type of	
 			Rook = [fromJust board.[index]]
 			Queen = [fromJust board.[index]]
+			King = if ( king_p.xCord == xCord && king_p.yCord - 1 == yCord) [piece] []
 			_ = []
 	
 
@@ -109,9 +104,11 @@ where
 	# index = xCord + yCord * 8
 	| isNothing board.[index] = backtrace_South king_p (xCord, yCord + 1) board
 	| (fromJust board.[index]).player == king_p.player = []
+	# piece = (fromJust board.[index])
 	=  case (fromJust board.[index]).type of	
 			Rook = [fromJust board.[index]]
 			Queen = [fromJust board.[index]]
+			King = if ( king_p.xCord == xCord && king_p.yCord + 1 == yCord) [piece] []
 			_ = []
 
 
@@ -121,9 +118,11 @@ where
 	# index = xCord + yCord * 8
 	| isNothing board.[index] = backtrace_East king_p (xCord + 1, yCord) board
 	| (fromJust board.[index]).player == king_p.player = []
+	# piece = (fromJust board.[index])
 	=  case (fromJust board.[index]).type of	
 			Rook = [fromJust board.[index]]
 			Queen = [fromJust board.[index]]
+			King = if ( king_p.xCord + 1 == xCord && king_p.yCord == yCord) [piece] []
 			_ = []
 
 	backtrace_West :: Piece (Int, Int) !Board -> [Piece]
@@ -132,9 +131,11 @@ where
 	# index = xCord + yCord * 8
 	| isNothing board.[index] = backtrace_West king_p (xCord - 1, yCord) board
 	| (fromJust board.[index]).player == king_p.player = []
+	# piece = (fromJust board.[index])
 	=  case (fromJust board.[index]).type of	
 			Rook = [fromJust board.[index]]
 			Queen = [fromJust board.[index]]
+			King = if ( king_p.xCord - 1 == xCord && king_p.yCord == yCord) [piece] []
 			_ = []
 
 	/*Diagonals*/
@@ -148,6 +149,7 @@ where
 	=  case piece.type of
 			Bishop = [fromJust board.[index]]
 			Queen = [fromJust board.[index]]
+			King = if ( king_p.xCord - 1 == xCord && king_p.yCord - 1 == yCord) [piece] []
 			Pawn = 	case king_p.player of
 						BlackPiece = if ( (king_p.xCord + 1 == xCord || king_p.xCord - 1 == xCord ) && king_p.yCord + 1 == yCord) [piece] []
 						WhitePiece = if ( (king_p.xCord + 1 == xCord || king_p.xCord - 1 == xCord ) && king_p.yCord - 1 == yCord) [piece] []
@@ -164,6 +166,7 @@ where
 	=  case piece.type of
 			Bishop = [fromJust board.[index]]
 			Queen = [fromJust board.[index]]
+			King = if ( king_p.xCord + 1 == xCord && king_p.yCord - 1 == yCord) [piece] []
 			Pawn = 	case king_p.player of
 						BlackPiece = if ( (king_p.xCord + 1 == xCord || king_p.xCord - 1 == xCord ) && king_p.yCord + 1 == yCord) [piece] []
 						WhitePiece = if ( (king_p.xCord + 1 == xCord || king_p.xCord - 1 == xCord ) && king_p.yCord - 1 == yCord) [piece] []
@@ -180,6 +183,7 @@ where
 	= case piece.type of
 			Bishop = [fromJust board.[index]]
 			Queen = [fromJust board.[index]]
+			King = if ( king_p.xCord - 1 == xCord && king_p.yCord + 1 == yCord) [piece] []
 			Pawn = 	case king_p.player of
 						BlackPiece = if ( (king_p.xCord + 1 == xCord || king_p.xCord - 1 == xCord ) && king_p.yCord + 1 == yCord) [piece] []
 						WhitePiece = if ( (king_p.xCord + 1 == xCord || king_p.xCord - 1 == xCord ) && king_p.yCord - 1 == yCord) [piece] []
@@ -196,6 +200,7 @@ where
 	=  case piece.type of
 			Bishop = [fromJust board.[index]]
 			Queen = [fromJust board.[index]]
+			King = if ( king_p.xCord + 1 == xCord && king_p.yCord + 1 == yCord) [piece] []
 			Pawn = 	case king_p.player of
 						BlackPiece = if ( (king_p.xCord + 1 == xCord || king_p.xCord - 1 == xCord ) && king_p.yCord + 1 == yCord) [piece] []
 						WhitePiece = if ( (king_p.xCord + 1 == xCord || king_p.xCord - 1 == xCord ) && king_p.yCord - 1 == yCord) [piece] []
