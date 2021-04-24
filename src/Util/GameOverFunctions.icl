@@ -4,34 +4,22 @@ import StdEnv, StdIO, Util.Constants, StdDebug
 
 
 
-/* For testing
-instance toString Piece where
-	toString p = "Cords: " +++ toString p.xCord +++ "," +++ toString p.yCord +++ ") "
-*/
-
 /*
 * A function that takes an index of the player and gamestate.
 * It checks if the King of the given index player is under check or not
 */
-isUnderCheck :: (*PSt GameState) -> (Bool, (*PSt GameState))
-isUnderCheck pst=:{ls}
-# (pieces_list, pst) = getCriticalPieces ls.turnCount pst
+isUnderCheck :: PieceColour Board -> Bool
+isUnderCheck colour board
+# pieces_list = getCriticalPieces colour board
 # isCheck = length pieces_list <> 0
-= (isCheck, pst)
+= isCheck
 
-/* FOR TESTING: 
-where
-	printPieces :: [Piece] -> String
-	printPieces [p:rest]
-	| length [p:rest] == 0 = "No piece"
-	= "Cords: (" +++ toString p.xCord +++ "," +++ toString p.yCord +++ ") "
-*/
 
 //Get Pieces that are doing a check on the king of the given index player
-getCriticalPieces :: !Int (*PSt GameState) -> ([Piece], (*PSt GameState))
-getCriticalPieces p_ind pst=:{ls=gs,io}
-# king_p = searchKing gs.worldMatrix gs.players.[p_ind].colour
-= (backtrace king_p pst)
+getCriticalPieces :: PieceColour Board -> [Piece]
+getCriticalPieces colour board
+# king_p = searchKing board colour
+= backtrace king_p board
 where
 	searchKing :: !Board !PieceColour -> Piece
 	searchKing board colour = searchKingAux board colour 0
@@ -42,25 +30,25 @@ where
 		| (fromJust board.[ind]).player <> colour || (fromJust board.[ind]).type <> King = searchKingAux board colour (ind+1)
 		= (fromJust board.[ind]) /// piece found
 	
-	backtrace :: Piece (*PSt GameState) -> ([Piece], (*PSt GameState))
-	backtrace king_p pst=:{ls=gs, io}
-	# creticalPieces = (backtrace_North king_p (king_p.xCord, king_p.yCord - 1) gs.worldMatrix) //up
-					++ (backtrace_South king_p (king_p.xCord, king_p.yCord + 1) gs.worldMatrix)	//down
-					++ (backtrace_East king_p (king_p.xCord + 1, king_p.yCord) gs.worldMatrix)  //right
-					++ (backtrace_West king_p (king_p.xCord - 1, king_p.yCord) gs.worldMatrix)	//left
-					++ (backtrace_NorthWest king_p (king_p.xCord - 1, king_p.yCord - 1) gs.worldMatrix) //topleft
-					++ (backtrace_NorthEast king_p (king_p.xCord + 1, king_p.yCord - 1) gs.worldMatrix) //topright
-					++ (backtrace_SouthWest king_p (king_p.xCord - 1, king_p.yCord + 1) gs.worldMatrix)	//bottomleft
-					++ (backtrace_SouthEast king_p (king_p.xCord + 1, king_p.yCord + 1) gs.worldMatrix) //bottomright
-					++ (check_Knight king_p (king_p.xCord + 2, king_p.yCord - 1) gs.worldMatrix) // knight x + 2, y - 1   	-*
-					++ (check_Knight king_p (king_p.xCord + 2, king_p.yCord + 1) gs.worldMatrix) // Knight x + 2 , y + 1  	-.
-					++ (check_Knight king_p (king_p.xCord + 1, king_p.yCord + 2) gs.worldMatrix) // knight y + 2, x + 1 	|.
-					++ (check_Knight king_p (king_p.xCord - 1, king_p.yCord + 2) gs.worldMatrix) // knight y + 2, x - 1 	.|
-					++ (check_Knight king_p (king_p.xCord + 1, king_p.yCord - 2) gs.worldMatrix) // knight y - 2, x + 1 	|*
-					++ (check_Knight king_p (king_p.xCord - 1, king_p.yCord - 2) gs.worldMatrix) // knight y - 2, x - 1 	*|
-					++ (check_Knight king_p (king_p.xCord - 2, king_p.yCord - 1) gs.worldMatrix) // knight x - 2, y - 1 	*-
-					++ (check_Knight king_p (king_p.xCord - 2, king_p.yCord + 1) gs.worldMatrix) // knight x - 2, y - 1 	.-
-	= (creticalPieces, pst)
+	backtrace :: Piece Board -> [Piece]
+	backtrace king_p board
+	# creticalPieces = (backtrace_North king_p (king_p.xCord, king_p.yCord - 1) board) //up
+					++ (backtrace_South king_p (king_p.xCord, king_p.yCord + 1) board)	//down
+					++ (backtrace_East king_p (king_p.xCord + 1, king_p.yCord) board)  //right
+					++ (backtrace_West king_p (king_p.xCord - 1, king_p.yCord) board)	//left
+					++ (backtrace_NorthWest king_p (king_p.xCord - 1, king_p.yCord - 1) board) //topleft
+					++ (backtrace_NorthEast king_p (king_p.xCord + 1, king_p.yCord - 1) board) //topright
+					++ (backtrace_SouthWest king_p (king_p.xCord - 1, king_p.yCord + 1) board)	//bottomleft
+					++ (backtrace_SouthEast king_p (king_p.xCord + 1, king_p.yCord + 1) board) //bottomright
+					++ (check_Knight king_p (king_p.xCord + 2, king_p.yCord - 1) board) // knight x + 2, y - 1   	-*
+					++ (check_Knight king_p (king_p.xCord + 2, king_p.yCord + 1) board) // Knight x + 2 , y + 1  	-.
+					++ (check_Knight king_p (king_p.xCord + 1, king_p.yCord + 2) board) // knight y + 2, x + 1 	|.
+					++ (check_Knight king_p (king_p.xCord - 1, king_p.yCord + 2) board) // knight y + 2, x - 1 	.|
+					++ (check_Knight king_p (king_p.xCord + 1, king_p.yCord - 2) board) // knight y - 2, x + 1 	|*
+					++ (check_Knight king_p (king_p.xCord - 1, king_p.yCord - 2) board) // knight y - 2, x - 1 	*|
+					++ (check_Knight king_p (king_p.xCord - 2, king_p.yCord - 1) board) // knight x - 2, y - 1 	*-
+					++ (check_Knight king_p (king_p.xCord - 2, king_p.yCord + 1) board) // knight x - 2, y - 1 	.-
+	= creticalPieces
 
 	/*________________ BackTracing functions for backtracing*/
 	

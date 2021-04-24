@@ -20,9 +20,14 @@ initPlayers = {
 				{colour=BlackPiece, castleLeft= True,castleRight=True}
 			  }
 
-
 move :: SoundSample
 move = { soundid = SND_JUMP, soundfile = "./Util/SOUNDS/JUMP.WAV", soundbuffers =  1 }
+
+
+
+getGameState :: (*PSt GameState) -> (GameState, (*PSt GameState))
+getGameState pst=:{ls} = (ls,pst)
+
 
 instance == ChessType
 where

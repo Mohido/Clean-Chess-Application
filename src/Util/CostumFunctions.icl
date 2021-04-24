@@ -32,3 +32,15 @@ updatePiece xC yC (Just p) = Just {p & xCord = xC , yCord = yC}
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+

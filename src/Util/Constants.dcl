@@ -33,6 +33,7 @@ instance == ChessType
 
 initMoves :: {#Bool}
 updateBool:: Int {#Bool} -> {#Bool}
+getGameState :: (*PSt GameState) -> (GameState, (*PSt GameState))
 
 ::PieceColour = BlackPiece | WhitePiece | ColourError
 

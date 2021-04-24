@@ -1,5 +1,5 @@
 implementation module Util.HighLighting.RookMoves
-import StdEnv, StdIO, Util.Constants, StdDebug
+import StdEnv, StdIO, Util.Constants, StdDebug, Util.CostumFunctions, Util.GameOverFunctions
 from StdFunc import seq
 
 highLightRook :: Bool (*PSt GameState) !Piece -> (*PSt GameState)
@@ -20,6 +20,8 @@ goLeftRook :: Bool Int Int !Piece (*PSt GameState)  -> (*PSt GameState)
 goLeftRook highlight xC yC p pst=:{ls, io} 
 | xC < 0 = pst
 # penColour = {r=120, g=192, b=196}
+//# pst = updateWorldMatrix (xC,yC) p pst ///Moving the piece toward the destination.
+//| isUnderCheck 
 | isNothing ls.worldMatrix.[xC + yC * 8] = case highlight of 
 												True = goLeftRook highlight (xC-1) yC p {pst & io = appWindowPicture (ls.windowId) ((hiliteAt point tile)) io , ls = {ls & validMoves = updateBool (xC + yC * 8) ls.validMoves}}
 												False = goLeftRook highlight (xC-1) yC p {pst & ls = {ls & validMoves = updateBool (xC + yC * 8) ls.validMoves}}
