@@ -13,7 +13,7 @@ showValidMoves realtime pst=:{ls, io} =
 								 Rook   = highLightRook realtime pst p 
 								 Bishop = HighlightBishop  pst p
 								 Pawn   = highLightPawn  pst p
-								 Knight = HighlightKnight  pst p
+								 Knight = HighlightKnight realtime pst p
 								 Queen  = HighlightQueen  pst p
 								 King   = HighlightKing pst p
 								

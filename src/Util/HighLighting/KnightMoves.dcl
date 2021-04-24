@@ -5,11 +5,11 @@ from StdFunc import seq
 
 /*MotherFunction that redirects to the checkpoint*/
 
-HighlightKnight :: (*PSt GameState) !Piece -> (*PSt GameState)
+HighlightKnight :: Bool (*PSt GameState) !Piece -> (*PSt GameState)
 
 
 /*
 * Checking if one Point is highlightable at a time.
 */
 
-CheckPoint :: Int Int !Piece (*PSt GameState) -> (*PSt GameState)
+CheckPoint :: Bool Int Int !Piece (*PSt GameState) -> (*PSt GameState)

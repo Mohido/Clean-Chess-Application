@@ -4,10 +4,10 @@ from StdFunc import seq
 
 highLightRook :: Bool (*PSt GameState) !Piece -> (*PSt GameState)
 highLightRook highlight pst=:{ls, io} p = seq [	goLeftRook highlight (xC-1) yC p , 
-									 	goRightRook highlight (xC+1) yC p ,
-									 	goForwardRook highlight xC (yC+1) p ,
-									 	goBackwardRook highlight xC (yC-1) p 
-									] newPst
+									 			goRightRook highlight (xC+1) yC p ,
+									 			goForwardRook highlight xC (yC+1) p ,
+									 			goBackwardRook highlight xC (yC-1) p 
+												] newPst
 where
 	xC 	   = (p.xCord) 
 	yC 	   = (p.yCord) 
@@ -19,7 +19,7 @@ where
 goLeftRook :: Bool Int Int !Piece (*PSt GameState)  -> (*PSt GameState)
 goLeftRook highlight xC yC p pst=:{ls=gs, io} 
 | xC < 0 = pst
-# penColour = {r=120, g=192, b=196}
+//# penColour = {r=120, g=192, b=196}
 | not (isNothing gs.worldMatrix.[xC + yC * 8]) && (fromJust gs.worldMatrix.[xC + yC * 8]).player == p.player = pst 		// initial check is necessary!
 # updatedPst = updateWorldMatrix (xC,yC) (p.xCord + p.yCord * 8) pst   // update the world matrix
 # (game_s , updatedPst2) = getGameState updatedPst					   // get the new gamestate of the world
