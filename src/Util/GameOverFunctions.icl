@@ -1,6 +1,31 @@
 implementation module Util.GameOverFunctions
 
-import StdEnv, StdIO, Util.Constants, StdDebug
+import StdEnv, StdIO, Util.Constants, StdDebug, Util.Rendering
+
+
+
+
+
+
+/*
+* Takes the original PST with no selected piece or whatsoever, then bruteforce to see if there is a CheckMate
+* PieceColour : The player u want to check if he is under a checkmate
+*/
+isGameOver :: PieceColour (*PSt GameState) -> (Bool , (*PSt GameState) )
+isGameOver p_colour pst=:{ls}
+# pieces_list = [ p \\ p <-: ls.worldMatrix | not (isNothing p) && (fromJust p).player == p_colour ]
+= searchValidMoves pieces_list pst
+where
+	searchValidMoves:: [(Maybe Piece)] (*PSt GameState) -> (Bool, (*PSt GameState) )
+	searchValidMoves [] pst = (True, pst)
+	searchValidMoves [p:rest] pst=:{ls=gs}
+	# tempPst = {pst & ls = {gs & selectedPiece = p}}
+	# validPst = showValidMoves False tempPst
+	# (game_s, validPst) = getGameState validPst
+	# foundValid = or [ move \\ move <-: game_s.validMoves]
+	# orig_pst = {validPst & ls = gs}
+	| foundValid = (False, orig_pst) /// game not over
+	= searchValidMoves rest orig_pst
 
 
 
@@ -13,6 +38,13 @@ isUnderCheck colour board
 # pieces_list = getCriticalPieces colour board
 # isCheck = length pieces_list <> 0
 = isCheck
+
+
+
+
+
+
+
 
 
 //Get Pieces that are doing a check on the king of the given index player
@@ -181,3 +213,14 @@ where
 	= if (piece.type == Knight) [piece] []
 	
 	
+
+
+
+
+
+
+
+
+
+
+

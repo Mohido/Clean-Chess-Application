@@ -15,7 +15,7 @@ showValidMoves realtime pst=:{ls, io} =
 								 Bishop = HighlightBishop realtime pst p
 								 Knight = HighlightKnight realtime pst p
 								 Queen  = HighlightQueen realtime pst p
-								 King   = HighlightKing pst p
+								 King   = HighlightKing realtime pst p
 								
 								
 /*________Rendering Function_____*/

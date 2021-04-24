@@ -25,9 +25,10 @@ where
 /*________Mouse Up______________ */
 mouseHandler (MouseUp hitPoint _) (nil, pst=:{ls=gs, io}) 
 | hitPoint.x > TILE_SIZE*TILE_SIZE || hitPoint.y > TILE_SIZE*TILE_SIZE = (nil, deHighlight) // if the mouseUp event happens out of the picture Context
-|(isNothing gs.selectedPiece) = (nil,pst)													// seeing if a piece is selected currently, if not, do nothing 
-| gs.validMoves.[index] =  (nil, trace_n (toString isCheck) pstReturn)				   	// if a move is valid, update
-= (nil, {deHighlight & ls.selectedPiece = Nothing} )											// if nothing then just dehighlight and move on
+| (isNothing gs.selectedPiece) = (nil,pst)													// seeing if a piece is selected currently, if not, do nothing 
+| not gs.validMoves.[index] =  	(nil, {deHighlight & ls.selectedPiece = Nothing} )			   	// if a move is valid, update
+| game_over = abort "Game over!"
+=  (nil, trace_n (toString game_over) returnPst)											// if nothing then just dehighlight and move on
 where
 	index 		 = mouseUpxCord + mouseUpyCord * 8
 	mouseUpxCord = (hitPoint.x / TILE_SIZE)													/// pixel to tile coords system
@@ -37,10 +38,15 @@ where
 	changedTurns = {editedPst & ls.turnCount = (editedPst.ls.turnCount + 1) rem 2}			/// take the edited state and update the turns
 	playSoundPst = case deHighlight.ls.worldMatrix.[index] of 								/// playing sounds when the pieces move
 					 Nothing 		=  playSoundmove changedTurns
-					 Just something =  playSoundCapture changedTurns
-	(game_s,pstReturn ) = getGameState playSoundPst
-	isCheck = isUnderCheck BlackPiece game_s.worldMatrix
-	
+					 Just something =  playSoundCapture changedTurns						/// a valid move accured here! .. now check if game is over!
+	(g_state, tempPst) = getGameState playSoundPst
+	shiftedPlayer = (g_state.players.[g_state.turnCount] ).colour
+	isChecked = isUnderCheck shiftedPlayer g_state.worldMatrix
+	/*tempPst2 = case isChecked of
+					True = ----Remove castling from the g_state and use tempPst2 instead of tempPst----
+					False = tempPst
+	*/
+	(game_over, returnPst) = isGameOver shiftedPlayer tempPst  //isUnderCheck BlackPiece game_s.worldMatrix
 	// TODO: Calculate Game ending... 
 	
 	

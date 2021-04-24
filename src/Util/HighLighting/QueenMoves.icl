@@ -17,4 +17,6 @@ where
 	xC 	   = (p.xCord) 
 	yC 	   = (p.yCord) 
 	point = {x = xC * TILE_SIZE , y = yC * TILE_SIZE}
-	newPst     = {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io}
+	newPst     = case highlight of
+					True = {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io} 
+					False = pst

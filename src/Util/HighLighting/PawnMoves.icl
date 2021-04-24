@@ -18,7 +18,10 @@ where
 	xC 	   = (p.xCord) 
 	yC 	   = (p.yCord) 
 	point  = {x = xC * TILE_SIZE , y = yC * TILE_SIZE}
-	newPst = {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io}
+	newPst     = case hightLight of
+					True = {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io} 
+					False = pst
+
 	
 /*One big function to manage moving forward for both white and black pawn pieces.*/
 moveForwardPawn :: Bool Int Int !Piece (*PSt GameState)-> (*PSt GameState)

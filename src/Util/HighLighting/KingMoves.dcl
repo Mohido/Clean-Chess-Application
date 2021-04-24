@@ -9,7 +9,7 @@ from StdFunc import seq
 // Takes Process State, Games State and Piece, and returns Process State
 // and Game State
 //**********************************************************
-HighlightKing :: (*PSt GameState) !Piece -> (*PSt GameState)
+HighlightKing :: Bool (*PSt GameState) !Piece -> (*PSt GameState)
 
 
 //**********************************************************************************
@@ -20,10 +20,10 @@ HighlightKing :: (*PSt GameState) !Piece -> (*PSt GameState)
 //*************************************************************************************
 
 
-KingValidMoves :: Int Int !Piece (*PSt GameState) -> (*PSt GameState)
+KingValidMoves :: Bool Int Int !Piece (*PSt GameState) -> (*PSt GameState)
 
 //Check (and highlight) whether the king can castle King side
-KingSideCastle :: Int Int !Piece (*PSt GameState) -> (*PSt GameState)
+KingSideCastle :: Bool Int Int !Piece (*PSt GameState) -> (*PSt GameState)
 
 //Check (and highlight) whether the king can castle QueenSide side
-QueenSideCastle :: Int Int !Piece (*PSt GameState) -> (*PSt GameState)
+QueenSideCastle :: Bool Int Int !Piece (*PSt GameState) -> (*PSt GameState)

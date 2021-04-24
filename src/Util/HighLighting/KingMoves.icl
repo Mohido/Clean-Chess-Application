@@ -1,26 +1,28 @@
 implementation module Util.HighLighting.KingMoves
-import StdEnv, StdIO, Util.Constants
+import StdEnv, StdIO, Util.Constants, Util.GameOverFunctions, Util.CostumFunctions
 from StdFunc import seq
 
 
 
-HighlightKing :: (*PSt GameState) !Piece -> (*PSt GameState)
-HighlightKing pst=:{ls, io} p = seq [	KingValidMoves (xC-1) yC p, 
-										KingValidMoves (xC+1) yC p,
-										KingValidMoves xC (yC+1) p, 
-										KingValidMoves xC (yC-1) p, 
-										KingValidMoves (xC+1) (yC+1) p,
-										KingValidMoves (xC+1) (yC-1) p,
-										KingValidMoves (xC-1) (yC+1) p,
-										KingValidMoves (xC-1) (yC-1) p, 
-										KingSideCastle (xC+1) yC p, 
-										QueenSideCastle (xC-1) yC p
+HighlightKing :: Bool (*PSt GameState) !Piece -> (*PSt GameState)
+HighlightKing highlight pst=:{ls, io} p = seq [	KingValidMoves highlight (xC-1) yC p, 
+										KingValidMoves highlight (xC+1) yC p,
+										KingValidMoves highlight xC (yC+1) p, 
+										KingValidMoves highlight xC (yC-1) p, 
+										KingValidMoves highlight (xC+1) (yC+1) p,
+										KingValidMoves highlight (xC+1) (yC-1) p,
+										KingValidMoves highlight (xC-1) (yC+1) p,
+										KingValidMoves highlight (xC-1) (yC-1) p, 
+										KingSideCastle highlight (xC+1) yC p, 
+										QueenSideCastle highlight (xC-1) yC p
 									 ] newPst
 where
 	xC 	   = (p.xCord) 
 	yC 	   = (p.yCord) 
 	point = {x = xC * TILE_SIZE , y = yC * TILE_SIZE}
-	newPst     = {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io}
+	newPst     = case highlight of
+					True = {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io} 
+					False = pst
 
 
 //***************************************************************************************************************
@@ -29,14 +31,21 @@ where
 // left for the end of the game logic implementation
 //***************************************************************************************************************
 
-KingValidMoves :: Int Int !Piece (*PSt GameState) -> (*PSt GameState)
-KingValidMoves xCoordinate yCoordinate clickedPiece pst=:{ls, io} 
+KingValidMoves :: Bool Int Int !Piece (*PSt GameState) -> (*PSt GameState)
+KingValidMoves highlight xCoordinate yCoordinate clickedPiece pst=:{ls=gs, io} 
 | xCoordinate < 0 || xCoordinate > 7 || yCoordinate < 0 || yCoordinate > 7 = pst 
-= case ls.worldMatrix.[xCoordinate + yCoordinate * 8] of 
-	Nothing = {pst & io = appWindowPicture (ls.windowId) ((hiliteAt point tile)) io , ls = {ls & validMoves = updateBool (xCoordinate + yCoordinate * 8) ls.validMoves}}  
-	Just piece = case (piece.player == clickedPiece.player) of
-					False = {pst & io = appWindowPicture (ls.windowId) ((hiliteAt point tile)) io , ls = {ls & validMoves = updateBool (xCoordinate + yCoordinate * 8) ls.validMoves}}
-					True = pst
+| not (isNothing gs.worldMatrix.[xCoordinate + yCoordinate * 8]) && (fromJust gs.worldMatrix.[xCoordinate + yCoordinate * 8]).player == clickedPiece.player = pst 		// initial check is necessary!
+# updatedPst = updateWorldMatrix (xCoordinate,yCoordinate) (clickedPiece.xCord + clickedPiece.yCord * 8) pst   // update the world matrix
+# (game_s , updatedPst2) = getGameState updatedPst					   // get the new gamestate of the world
+# isChecked = isUnderCheck clickedPiece.player game_s.worldMatrix  			   // check if there is a check in the new world matrix
+# orig_Pst = {updatedPst2 & ls = gs}								   // returning back the new gamestate to the old one 
+| isChecked = orig_Pst	
+| isNothing gs.worldMatrix.[xCoordinate + yCoordinate * 8] =  case highlight of
+																	True = {orig_Pst & io = appWindowPicture (gs.windowId) ((hiliteAt point tile)) io , ls = {gs & validMoves = updateBool (xCoordinate + yCoordinate * 8) gs.validMoves}}  
+																	False = {orig_Pst & ls = {gs & validMoves = updateBool (xCoordinate + yCoordinate * 8) gs.validMoves}}  
+= case highlight of
+					True = {orig_Pst & io = appWindowPicture (gs.windowId) ((hiliteAt point tile)) io , ls = {gs & validMoves = updateBool (xCoordinate + yCoordinate * 8) gs.validMoves}}
+					False = {orig_Pst &  ls = {gs & validMoves = updateBool (xCoordinate + yCoordinate * 8) gs.validMoves}}
 where
 	point = {x = xCoordinate * TILE_SIZE , y = yCoordinate * TILE_SIZE} 
 
@@ -52,27 +61,29 @@ where
 
 
 
-KingSideCastle :: Int Int !Piece (*PSt GameState) -> (*PSt GameState)
-KingSideCastle xCoordinate yCoordinate clickedPiece pst=:{ls, io} 
+KingSideCastle :: Bool Int Int !Piece (*PSt GameState) -> (*PSt GameState)
+KingSideCastle highlight xCoordinate yCoordinate clickedPiece pst=:{ls, io} 
 | xCoordinate <> 5 && ( yCoordinate <> 0 || yCoordinate <> 7)  = pst //if king is not already on its orignal positon, we just return the current pst
 = case ls.worldMatrix.[xCoordinate + yCoordinate * 8] of
 	Nothing = case ls.worldMatrix.[(xCoordinate+1) + yCoordinate * 8] of 
 				Nothing = case ls.worldMatrix.[(xCoordinate + 2) + yCoordinate * 8] of 
 							Nothing = pst
-							Just piece = case(piece.player == clickedPiece.player) of
+							Just piece = case (piece.player == clickedPiece.player) of
 											False = pst 
 											True = case (piece.type == Rook) of
 													False = pst 
-													True = {pst & io = appWindowPicture (ls.windowId) (hiliteAt {  x = (xCoordinate + 1) * TILE_SIZE , y = yCoordinate * TILE_SIZE}  tile) io, ls = {ls & validMoves = updateBool ((xCoordinate + 1) + yCoordinate * 8) ls.validMoves}} 
-				Just piece = pst
+													True = case highlight of 
+														True = {pst & io = appWindowPicture (ls.windowId) (hiliteAt {  x = (xCoordinate + 1) * TILE_SIZE , y = yCoordinate * TILE_SIZE}  tile) io, ls = {ls & validMoves = updateBool ((xCoordinate + 1) + yCoordinate * 8) ls.validMoves}} 
+														False = {pst & ls = {ls & validMoves = updateBool ((xCoordinate + 1) + yCoordinate * 8) ls.validMoves}} 
+				Just piece = pst	
 	Just piece = pst
 
 
 
 
 
-QueenSideCastle :: Int Int !Piece (*PSt GameState) -> (*PSt GameState)
-QueenSideCastle xCoordinate yCoordinate clickedPiece pst=:{ls, io}
+QueenSideCastle :: Bool Int Int !Piece (*PSt GameState) -> (*PSt GameState)
+QueenSideCastle highlight xCoordinate yCoordinate clickedPiece pst=:{ls, io}
 | xCoordinate <> 3 && ( yCoordinate <> 0 || yCoordinate <> 7)  = pst //if king is not already on its orignal positon, we just return the current pst
 = case ls.worldMatrix.[xCoordinate + yCoordinate * 8] of
 	Nothing = case ls.worldMatrix.[(xCoordinate-1) + yCoordinate * 8] of
@@ -83,7 +94,16 @@ QueenSideCastle xCoordinate yCoordinate clickedPiece pst=:{ls, io}
 														False = pst 
 														True = case (piece.type == Rook) of
 																False = pst 
-																True = {pst & io = appWindowPicture (ls.windowId) (hiliteAt {  x = (xCoordinate - 1) * TILE_SIZE , y = yCoordinate * TILE_SIZE}  tile) io, ls = {ls & validMoves = updateBool ((xCoordinate - 1) + yCoordinate * 8) ls.validMoves}}
+																True = case highlight of
+																	True = {pst & io = appWindowPicture (ls.windowId) (hiliteAt {  x = (xCoordinate - 1) * TILE_SIZE , y = yCoordinate * TILE_SIZE}  tile) io, ls = {ls & validMoves = updateBool ((xCoordinate - 1) + yCoordinate * 8) ls.validMoves}}
+																	False = {pst & ls = {ls & validMoves = updateBool ((xCoordinate - 1) + yCoordinate * 8) ls.validMoves}}
 							Just piece = pst 
 				Just piece = pst 
 	Just piece = pst
+	
+	
+	
+	
+	
+	
+	
