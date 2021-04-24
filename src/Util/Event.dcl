@@ -1,10 +1,12 @@
 definition module Util.Event
 
-import StdEnv, StdIO
+import StdEnv, StdIO, Util.Constants
+import Util.GameOverFunctions
+/// handling mouse events
+mouseHandler :: MouseState (.ls, *PSt GameState) -> (.ls,*PSt GameState)
 
-handlingMouseEvent :: MouseState (.ls, *PSt .l) -> (.ls,*PSt .l)
+/// filtering out the unwanted mouse events
+m_filter :: MouseState -> Bool  
 
-
-
-
+/// saving game state and quiting
 quit:: (.ls, *PSt .l) -> (.ls, *PSt .l)

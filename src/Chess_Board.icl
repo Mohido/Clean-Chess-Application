@@ -1,93 +1,156 @@
 module Chess_Board
 
-import StdEnv, StdIO, StdFunc ///StdFunc contains seq, StdDebug contains trace_n
-import Util.Reading, Util.Event, Util.Constants
-
-:: Piece = {
-	xCord:: Int, 
-	yCord :: Int,
-	player:: Int, 
-	sprite:: PiecePicture
-	}
+import StdEnv, StdIO, StdFunc, StdDebug ///StdFunc contains seq, StdDebug contains trace_n
+import Util.Reading, Util.Event, Util.Constants, Util.CostumFunctions, Util.Rendering
 
 
 
-::SetState = {
-			 p :: PiecePicture
-		   }
-		   
-
+//Start Function and Initializing game assets
 Start:: *World -> *World
 Start world 
-#! (piece, world) = LoadPicture "white_queen.cimg" world
-= startIO SDI {p = piece} (initProcessState piece) [ProcessClose closeProcess] world
-where 
-	initProcessState piece pst /// initialization of the interface program.
-	# (windowid , pst) = openId pst
-	# (errorM, pst) = openWindow undef (window windowid piece) pst
-	= pst
-	where
-		/// _____________ Elements Gui initialization Area_____________
-		window windowid piece = Window "Title" NilLS
-					[	
-					  WindowId windowid,
-					  WindowClose quit, 									/// using the quit function defined below.
-					  WindowViewSize {w = 8*TILE_SIZE, h = 8*TILE_SIZE}, 	/// defining the size of the window.
-					  WindowLook False (paintFun piece),   					/// This will take the state and update state away.
-					  WindowMouse (const True) Able handlingMouseEvent 		/// defines a mouse event system and attach handlingMouseEvent function to it.
-					  ]
+# gs = { turnCount=0,players=initPlayers , worldMatrix = board,
+		 selectedPiece = Nothing, windowId = wid, validMoves = initMoves , 
+		 sprites = {whiteKing = wking_sprite , blackKing = bking_sprite, 
+		 			whiteQueen = wq_sprite , blackQueen = bq_sprite,
+		 			whiteBishop = bishop_w_sprite , blackBishop = bishop_b_sprite,
+		 			whiteRook = rook_w_sprite , blackRook = rook_b_sprite,
+		 			whiteKnight = knight_w_sprite, blackKnight = knight_b_sprite,
+		 			whitePawn = pawn_w_sprite, blackPawn = pawn_b_sprite   }}  		///initial game state (process state)
+= startIO SDI gs (initIO (wid, board) ) [ProcessClose closeProcess] worldFinal
+where
+	/*_______ world function + reading sprites________*/
+	(wid ,world1 ) = openId world
+	
+	/*________ Sprites Loading Area_______________*/
+	(wq_sprite, world2) = LoadPicture "../res/Queen_White.cimg" world1			//white_queen
+	(bq_sprite, world3) = LoadPicture "../res/Queen_Black.cimg" world2              	//black_queen
+	
+	(wking_sprite, world4) = LoadPicture "../res/King_White.cimg" world3			//white_king
+	(bking_sprite, world5) = LoadPicture "../res/King_Black.cimg" world4			//black_king
+	
+	(bishop_w_sprite, world6) = LoadPicture "../res/Bishop_White.cimg" world5		//bishop_white
+	(bishop_b_sprite, world7) = LoadPicture "../res/Bishop_Black.cimg" world6		//bishop_black
+	
+	(pawn_w_sprite, world8) = LoadPicture "../res/Pawn_White.cimg" world7 			//pawn_white
+	(pawn_b_sprite, world9) = LoadPicture "../res/Pawn_Black.cimg" world8			//pawn_black
+	
+	(knight_w_sprite, world10) = LoadPicture "../res/Knight_White.cimg" world9 		//knight_white
+	(knight_b_sprite, world11) = LoadPicture "../res/Knight_Black.cimg" world10		//knight_black
+	
+	(rook_w_sprite, world12) = LoadPicture "../res/Rook_White.cimg" world11 		//rook_white
+	(rook_b_sprite, worldFinal) = LoadPicture "../res/Rook_Black.cimg" world12		//rook_black
+	
+	
+	/*_____________Loading pieces Area________________*/ 
+	       		 /*queen*/
+	wq_piece = { xCord = 3, yCord = 7,  player = WhitePiece, type = Queen, sprite = wq_sprite} 
+	bq_piece = { xCord = 3, yCord = 0,  player = BlackPiece, type = Queen, sprite = bq_sprite} 
+	        	 /*king*/
+	wking_piece = { xCord = 4, yCord = 7, player = WhitePiece, type = King, sprite = wking_sprite}
+	bking_piece = { xCord = 4, yCord = 0, player = BlackPiece, type = King, sprite = bking_sprite}
+			/*left piece of the bishop*/
+	bishop_w_piece = { xCord = 2, yCord = 7,  player = WhitePiece, type = Bishop, sprite = bishop_w_sprite} 
+	bishop_b_piece = { xCord = 2, yCord = 0,  player = BlackPiece, type = Bishop, sprite = bishop_b_sprite} 
+			/*left piece of the pawn*/
+	pawn_w_piece = { xCord = 0, yCord = 6,  player = WhitePiece, type = Pawn, sprite = pawn_w_sprite} 
+	pawn_b_piece = { xCord = 0, yCord = 1,  player = BlackPiece, type = Pawn, sprite = pawn_b_sprite} 
+			/*Left piece of the knight*/
+	knight_w_piece = { xCord = 1, yCord = 7,  player = WhitePiece, type = Knight, sprite = knight_w_sprite} 
+	knight_b_piece = { xCord = 1, yCord = 0,  player = BlackPiece, type = Knight, sprite = knight_b_sprite} 
+			/*Left piece of the Rook*/
+	rook_w_piece = { xCord = 0, yCord = 7,  player = WhitePiece, type = Rook, sprite = rook_w_sprite} 
+	rook_b_piece = { xCord = 0, yCord = 0,  player = BlackPiece, type = Rook, sprite = rook_b_sprite} 
+	
+	/*Initial board creation*/
+	initBoard = [Just rook_b_piece, Just knight_b_piece, Just bishop_b_piece, Just bq_piece, Just bking_piece,  Just {bishop_b_piece & xCord = 5}, Just {knight_b_piece & xCord = 6}, Just {rook_b_piece & xCord = 7}] ++  	// black Main pieces area 
+				[Just { pawn_b_piece & xCord = x }  \\ x <- [0..7]] ++	// black pawns
+				[Nothing \\ s <- [0..7], y <- [1..4]] ++ 				 //middle empty area.
+				[Just { pawn_w_piece & xCord = x}  \\ x <- [0..7]] ++	// white pawns
+				[Just rook_w_piece, Just knight_w_piece, Just bishop_w_piece,  Just wq_piece, Just wking_piece, Just {bishop_w_piece & xCord = 5}, Just {knight_w_piece & xCord = 6}, Just {rook_w_piece & xCord = 7}] 	// white Main pieces area
+				
+	// main board, with 8*8 tile of pieces or nothing.
+	board :: !Board
+	board =  { p \\ p <- initBoard } 	//Main Initial board.
+
+//_____________________________________________________________________________
+
+
+
+//____________ Initializing the window area
+
+initIO :: (!Id, {!(Maybe Piece)}) (PSt GameState) -> (PSt GameState)
+initIO w_inits=:(wid, preBoard) pst=:{ls}
+# (errorM, newPst) = openWindow undef (window) pst
+//# (errorM, newpst) = openMenu undef mdef pst
+= newPst
+where
+	window = Window "Title" NilLS
+								[	
+									WindowId wid,
+									WindowClose quit, 
+									WindowActivate updateWindowLook, /// Changing the look of the window once it is activated...
+									WindowViewSize {w = 8*TILE_SIZE, h = 8*TILE_SIZE}, 	/// defining the size of the window.
+									WindowMouse m_filter Able mouseHandler,			/// Funcitons in Even.dcl. It handles mouse events
+									WindowInit updateWindowLook
+								]
+	where 
+		updateWindowLook :: (.ls, *PSt GameState) -> (.ls, *PSt GameState)
+		updateWindowLook (nil, upst) 
+		# (nil, last)  = fullWindowLook (nil, upst) 
+		= (nil, {last & io = setWindowLook last.ls.windowId False (False, look (False,last.ls.worldMatrix)) last.io } )
 		
-		///__________ Window painting functions __________________
-		/**
-			SelectState = Able | Unable  // if window is active or not.
-			UpdateState : see it in the library.. it contains the places needs rendering.
-			*Picture is passed when the funciton is called by the window attirbute. Just edit it and return a picture at the end.. drawAt and fillAt are functions that work on any drawable object. other funcitons are in the library.
-			Note: This function is called whenever a refresh to the page is needed or we can make the window call it explicitly from somewhere else.
-		*/
-		paintFun :: PiecePicture SelectState UpdateState *Picture -> *Picture  //style 2 more suffecient.
-		paintFun piece _ _ pic
-		# rgbColour = {r =130, g=63, b=59} 
-		# pic = setPenColour (RGB rgbColour) pic // this is for setting the colour of the brush.
-		= seq ([paintPiece piece {x =xp , y= yp} \\ xp<-[0..7], yp<-[0,1,6,7]]) (seq fillingFunctions pic)	  //   Apply a set of functions on an object sequently.
-		where
-			tile = {box_w = TILE_SIZE, box_h = TILE_SIZE} 	/// eventually a box.
-			fillingFunctions = [fillAt {x=ycord*TILE_SIZE, y=xcord*TILE_SIZE} tile \\ xcord <- [0..7] , ycord <- [0..7]|(xcord rem 2 == 0 && ycord rem 2 == 0) || (xcord rem 2 <>  0 && ycord rem 2 <> 0)]
+		fullWindowLook :: (.ls, *PSt GameState) -> (.ls, *PSt GameState)
+		fullWindowLook (nil, upst) = (nil, {upst & io = setWindowLook upst.ls.windowId True (False, look (True,upst.ls.worldMatrix)) upst.io } )
+									
+	mdef			= Menu "Game"
+						(	MenuItem "chooseBoardColours" [	MenuShortKey 'n']
+																			
+							:+:	MenuItem "NewGame" [MenuShortKey 'm']										  					  											
+							:+:	MenuSeparator     []
+							:+:	MenuItem "Quit"   [	MenuShortKey 'q']
+																						  
+							)	[]
+								
+									
 		
 		
-		/// ___________ Rendering Pieces functions
-		
-		paintPiece :: PiecePicture !Point2  *Picture -> *Picture
-		paintPiece pie coord pic  = paintPieceAux  (pointsAndColours) pic //To try the tail recursive way, replace with (pointsAndColours 0 0 [])
-		where 
-			
-			pointsAndColours = [ ((coord.x*TILE_SIZE + yPixel, coord.y*TILE_SIZE + xPixel)
-				, getPixelValue (xPixel, yPixel) pie )
-				\\ yPixel <- [0..TILE_SIZE] ,  xPixel <- [0..TILE_SIZE] | not ( getPixelValue (xPixel, yPixel) pie == {r=255, g=0, b=255}) ]
-			
-			//Tail Recursion doesn't really make a differnece preformance wise, approach is still very slow. 
-			
-			//Tail Recursive:
-			/*
-			pointsAndColours :: Int Int [((Int ,Int) , RGBColour)] -> [((Int ,Int) , RGBColour)] 
-			pointsAndColours _  TILE_SIZE acc = acc
-			pointsAndColours TILE_SIZE y acc = pointsAndColours 0 (y+1) acc  
-			pointsAndColours xPixel yPixel acc 
-			| (myColour == {r=255, g=0, b=255}) = pointsAndColours (xPixel + 1) yPixel acc
-			= pointsAndColours (xPixel + 1) yPixel (acc++[((coord.x*TILE_SIZE + yPixel, coord.y*TILE_SIZE + xPixel),myColour)]) 
-				where
-				myColour = getPixelValue (xPixel,yPixel) pie
-			*/
-			paintPieceAux :: [((Int ,Int) , RGBColour )] *Picture -> *Picture
-			paintPieceAux [] pic = pic
-			paintPieceAux [( (x,y) , rgb ) : rest ] pic
-			# pic = setPenColour (RGB rgb) pic 
-			= paintPieceAux rest (drawPointAt {x = x, y = y} pic)
 		
 		
-		getPixelValue ::  (Int, Int) PiecePicture -> RGBColour
-		getPixelValue (x,y) piece
-		# xRatio = TILE_SIZE / piece.tileWidth
-		# yRatio = TILE_SIZE / piece.tileHeight
-		# index =  (x/xRatio) + (y/yRatio) * piece.tileWidth
-		| index >= length piece.arrayOfPixels = {r=0, g=0, b=0}
-		= piece.arrayOfPixels!!index
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
+								
+								
+								
+					
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
