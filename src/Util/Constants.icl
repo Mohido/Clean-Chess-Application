@@ -14,16 +14,11 @@ initMoves = {False,False,False,False,False,False,False,False,
 updateBool:: Int {#Bool} -> {#Bool}
 updateBool int p = {(\x |x == int = (not a) = a) b \\ a<-:p & b<-[0..]}
 
-initPlayers :: {Player}
+initPlayers :: {!Player}
 initPlayers = {
 				{colour=WhitePiece, castleLeft= True,castleRight=True},
 				{colour=BlackPiece, castleLeft= True,castleRight=True}
 			  }
-
-move :: SoundSample
-move = { soundid = SND_JUMP, soundfile = "./Util/SOUNDS/JUMP.WAV", soundbuffers =  1 }
-
-
 
 getGameState :: (*PSt GameState) -> (GameState, (*PSt GameState))
 getGameState pst=:{ls} = (ls,pst)

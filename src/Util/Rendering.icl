@@ -1,6 +1,6 @@
 implementation module Util.Rendering
 
-import StdEnv, StdIO, Util.Constants, Util.CostumFunctions, Util.Highlights, Util.Dialogs
+import StdEnv, StdIO, Util.Constants, Util.CostumFunctions, Util.Highlights, Util.Dialogs, Util.Castling 
 
 
 /*Main Highlighting Function*/
@@ -40,8 +40,8 @@ look (all, board) _ {oldFrame, newFrame, updArea} pic
 # bottomPortion = (lookRectangle {corner1 = topLeft, corner2 = bottomRight} board rightPortion) 
 = bottomPortion // it contains teh right portion as well .......................... here ^ ......
 where
-	b_col_1 = White															///Board first colour
-	b_col_2 = RGB {r =130, g=63, b=59} 
+	b_col_1 = RGB scndBoardColour															///Board first colour
+	b_col_2 = RGB boardColour	
 			 	 
 
 
@@ -50,8 +50,8 @@ lookRectangle:: !Rectangle !Board *Picture -> *Picture
 lookRectangle rec=:{corner1, corner2} board pic 
 = fillPiecesFromTo (xStartCord, yStartCord) (xEndCord, yEndCord) board (tileIt (clearedBoard pic)) /* Clearing => Drawing Tiles => Drawing pieces*/
 where
-	b_col_1 = White										
-	b_col_2 = RGB {r =130, g=63, b=59}
+	b_col_1 = RGB scndBoardColour										
+	b_col_2 = RGB boardColour
 	clearedBoard pic = (clearRect canvas b_col_2 pic)					/// clearing
 	tileIt pic = fillRect (xStartCord, yStartCord) (xEndCord, yEndCord) b_col_1 pic /// drawing tiles
 	(xStartCord, yStartCord) = ( toInt ((toReal corner1.x / toReal TILE_SIZE) - 0.5) , toInt ((toReal corner1.y / toReal TILE_SIZE) - 0.5)) 	/// to Cooordinates from top left wiith flooring
@@ -204,24 +204,29 @@ UpdateGST :: Int Int (*PSt GameState) -> (*PSt GameState)
 UpdateGST mouseUpxCord mouseUpyCord pst=:{ls=gs, io}
 | mouseUpxCord == selectedxCord && selectedyCord == mouseUpyCord 		= pst
 | ((piece.type == Pawn) && ((mouseUpyCord == 7) ||(mouseUpyCord == 0))) = proPst
+| piece.type == Rook    && mouseUpyCord <> 7 = disableRightCastle lastPst
+| piece.type == Rook    && mouseUpyCord <> 0 = disableLeftCastle lastPst 
+| piece.type == King    && (mouseUpxCord <> 6 && mouseUpyCord <> selectedyCord)  && (mouseUpxCord <> 2 && mouseUpyCord <> selectedyCord) = disableBothCastle lastPst
+| piece.type == King = checkCastle mouseUpxCord mouseUpyCord lastPst
 = lastPst
 where
-	piece		 				  = fromJust gs.selectedPiece
 	proPst 		 				  = promotion mouseUpxCord mouseUpyCord pst
+	piece		 				  = fromJust gs.selectedPiece
 	(selectedxCord,selectedyCord) = (piece.xCord,piece.yCord)
-	pieceRendered 				  = MovePiece     (selectedxCord,selectedyCord) mouseUpxCord mouseUpyCord piece proPst
+	pieceRendered 				  = MovePiece     (selectedxCord,selectedyCord) mouseUpxCord mouseUpyCord Nothing proPst
 	updatedIo     				  = setWindowLook (pieceRendered.ls.windowId) False (False, look (False,pieceRendered.ls.worldMatrix)) pieceRendered.io
 	lastPst       				  = {pieceRendered & io = updatedIo}
 
 
 /*Takes oldCoordinates, new Coordinates, and changes the piece's coordinates as well as rendering it in the new place*/
-MovePiece :: (Int,Int) Int Int !Piece (*PSt GameState) -> (*PSt GameState)
-MovePiece    (selectedxCord,selectedyCord) mouseUpxCord mouseUpyCord piece pst=:{ls, io}
- = lastPst
+MovePiece :: (Int,Int) Int Int (!Maybe Piece) (*PSt GameState) -> (*PSt GameState)
+MovePiece    (selectedxCord,selectedyCord) mouseUpxCord mouseUpyCord piece pst=:{ls, io} 
+= lastPst
 where
+	piece2	    = if (isNothing piece) (fromJust ls.selectedPiece) (fromJust piece)
 	updatedPst  = updateWorldMatrix (mouseUpxCord, mouseUpyCord) (selectedxCord + selectedyCord * 8) pst 		//Piece is moved in the world matrix
 	erasePiece  = fillFunc mouseUpxCord mouseUpyCord updatedPst 
-	pieceMoved  = MovePieceFunc mouseUpxCord mouseUpyCord piece erasePiece
+	pieceMoved  = MovePieceFunc mouseUpxCord mouseUpyCord piece2 erasePiece
 	prelastPst  = fillFunc selectedxCord selectedyCord pieceMoved
 	lastPst 	= {prelastPst & ls.selectedPiece = Nothing} 
 
@@ -240,11 +245,11 @@ fillBoardAt xC yC pic
 =DrawColour xC yC pic
 where
 	DrawColour xC yC pic
-	#ourColour = RGB{r =130, g=63, b=59}
+	#ourColour = RGB boardColour
 	# pic = setPenColour ourColour pic
 	= fillAt {x= xC*TILE_SIZE, y= yC*TILE_SIZE} tile pic
 	DrawWhite xC yC pic
-	# pic = setPenColour White pic
+	# pic = setPenColour (RGB scndBoardColour) pic
 	= fillAt {x= xC*TILE_SIZE, y= yC*TILE_SIZE} tile pic
 
 

@@ -81,7 +81,7 @@ where
 initIO :: (!Id, {!(Maybe Piece)}) (PSt GameState) -> (PSt GameState)
 initIO w_inits=:(wid, preBoard) pst=:{ls}
 # (errorM, newPst) = openWindow undef (window) pst
-//# finalPst = {newPst & io = setWindowLook wid True (True,look (False,ls.worldMatrix)) newPst.io } 
+//# (errorM, newpst) = openMenu undef mdef pst
 = newPst
 where
 	window = Window "Title" NilLS
@@ -101,6 +101,17 @@ where
 		
 		fullWindowLook :: (.ls, *PSt GameState) -> (.ls, *PSt GameState)
 		fullWindowLook (nil, upst) = (nil, {upst & io = setWindowLook upst.ls.windowId True (False, look (True,upst.ls.worldMatrix)) upst.io } )
+									
+	mdef			= Menu "Game"
+						(	MenuItem "chooseBoardColours" [	MenuShortKey 'n']
+																			
+							:+:	MenuItem "NewGame" [MenuShortKey 'm']										  					  											
+							:+:	MenuSeparator     []
+							:+:	MenuItem "Quit"   [	MenuShortKey 'q']
+																						  
+							)	[]
+								
+									
 		
 		
 		
@@ -119,4 +130,27 @@ where
 		
 		
 		
-		
+
+								
+								
+								
+					
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								

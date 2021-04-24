@@ -9,7 +9,7 @@ import Util.GameOverFunctions
 
 mouseHandler :: MouseState (.ls, *PSt GameState) -> (.ls,*PSt GameState)
 mouseHandler (MouseDown hitPoint _ _) (nil, pst=:{ls=gs, io}) 
-| hitPoint.x > TILE_SIZE*TILE_SIZE || hitPoint.y > TILE_SIZE*TILE_SIZE = (nil, pst)  //// if the mouseDown event happens out of the picture Context
+| hitPoint.x > 512 || hitPoint.y > 512 = (nil, pst)  //// if the mouseDown event happens out of the picture Context
 | (isJust piece) && ( currentColor == (fromJust piece).player) = (nil, finalPst) 
 = (nil, pst)
 where
@@ -24,7 +24,7 @@ where
 	
 /*________Mouse Up______________ */
 mouseHandler (MouseUp hitPoint _) (nil, pst=:{ls=gs, io}) 
-| hitPoint.x > TILE_SIZE*TILE_SIZE || hitPoint.y > TILE_SIZE*TILE_SIZE = (nil, deHighlight) // if the mouseUp event happens out of the picture Context
+| hitPoint.x > 512 || hitPoint.y > 512 = (nil, {deHighlight & ls.selectedPiece = Nothing}) // if the mouseUp event happens out of the picture Context
 | (isNothing gs.selectedPiece) = (nil,pst)													// seeing if a piece is selected currently, if not, do nothing 
 | not gs.validMoves.[index] =  	(nil, {deHighlight & ls.selectedPiece = Nothing} )			   	// if a move is valid, update
 | game_over = abort "Game over!"
@@ -48,13 +48,10 @@ where
 	*/
 	(game_over, returnPst) = isGameOver shiftedPlayer tempPst  //isUnderCheck BlackPiece game_s.worldMatrix
 	// TODO: Calculate Game ending... 
-	
-	
-	
-	
-
-/*________Other Mouse Events______________ */
 mouseHandler _ pst =  pst
+	 
+	
+/*________Other Mouse Events______________ */
 
 m_filter :: MouseState -> Bool
 m_filter (MouseMove _ _ ) = False

@@ -11,21 +11,13 @@ pictDomain :== {corner1 = {x=0		    , y=0},
 				corner2 = {x=8*TILE_SIZE, y=8*TILE_SIZE}}  	
 
 
-
+// {r =130, g=63, b=59} 
 tile :== {box_w = TILE_SIZE, box_h = TILE_SIZE}
 
-SND_JUMP :==   1
-:: SoundID2 :== Int
-:: SoundSample
-  = { soundid       :: !SoundID2        // id for the sample (any number)
-   	 , soundfile     :: !String          // WAV file
- 	 , soundbuffers  :: !Int             // max times sample can be played together
- 	 }
+scndBoardColour :== {r=232, g=235 ,b=239}
+boardColour :== {r =85, g=140, b=129}
 
-move :: SoundSample
-
-
-initPlayers :: {Player}
+initPlayers :: {!Player}
 
 ::ChessType = Rook | Knight | Bishop | Queen | King | Pawn | NotPiece
 
@@ -86,7 +78,7 @@ instance toString Piece
 
 :: GameState = {
 		turnCount		 :: Int,
-		players			 :: {Player},
+		players			 :: {!Player},
 		worldMatrix      :: !Board ,
 		selectedPiece	 :: Maybe Piece,
 		windowId 		 :: !Id,

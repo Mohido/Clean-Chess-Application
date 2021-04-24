@@ -5,22 +5,22 @@ from StdFunc import seq
 
 
 HighlightKing :: Bool (*PSt GameState) !Piece -> (*PSt GameState)
-HighlightKing highlight pst=:{ls, io} p = seq [	KingValidMoves highlight (xC-1) yC p, 
+HighlightKing highlight pst=:{ls, io} p = seq ([	KingValidMoves highlight (xC-1) yC p, 
 										KingValidMoves highlight (xC+1) yC p,
 										KingValidMoves highlight xC (yC+1) p, 
 										KingValidMoves highlight xC (yC-1) p, 
 										KingValidMoves highlight (xC+1) (yC+1) p,
 										KingValidMoves highlight (xC+1) (yC-1) p,
 										KingValidMoves highlight (xC-1) (yC+1) p,
-										KingValidMoves highlight (xC-1) (yC-1) p, 
-										KingSideCastle highlight (xC+1) yC p, 
-										QueenSideCastle highlight (xC-1) yC p
-									 ] newPst
+										KingValidMoves highlight (xC-1) (yC-1) p
+									 ] ++ QueenSide ++ KingSide) pst
 where
-	xC 	   = (p.xCord) 
-	yC 	   = (p.yCord) 
-	point = {x = xC * TILE_SIZE , y = yC * TILE_SIZE}
-	newPst     = case highlight of
+	xC 	      = (p.xCord) 
+	yC 	   	  = (p.yCord) 
+	QueenSide =  if (ls.players.[ls.turnCount].castleLeft) [QueenSideCastle highlight (xC-1) yC p][]
+	KingSide  =  if (ls.players.[ls.turnCount].castleRight) [KingSideCastle highlight (xC+1) yC p] []
+	point     = {x = xC * TILE_SIZE , y = yC * TILE_SIZE}
+	newPst    = case highlight of
 					True = {pst & io = appWindowPicture (ls.windowId) (hiliteAt point tile) io} 
 					False = pst
 
