@@ -27,7 +27,9 @@ goLeftRook highlight xC yC p pst=:{ls=gs, io}
 # (game_s , updatedPst2) = getGameState updatedPst					   // get the new gamestate of the world
 # isChecked = isUnderCheck p.player game_s.worldMatrix  			   // check if there is a check in the new world matrix
 # orig_Pst = {updatedPst2 & ls = gs}								   // returning back the new gamestate to the old one 
-| isChecked = orig_Pst												   // if there is a check in the new world matrix, then it is an invalid move.
+| isChecked = case highlight of 
+						True  = goLeftRook highlight (xC-1) yC p orig_Pst
+						False = goLeftRook highlight (xC-1) yC p orig_Pst
 | isNothing gs.worldMatrix.[xC + yC * 8] = case highlight of 
 												True = goLeftRook highlight (xC-1) yC p {orig_Pst & io = appWindowPicture (gs.windowId) ((hiliteAt point tile)) io , ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}}
 												False = goLeftRook highlight (xC-1) yC p {orig_Pst & ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}}
@@ -47,7 +49,9 @@ goRightRook highlight xC yC p pst=:{ls=gs, io}
 # (game_s , updatedPst2) = getGameState updatedPst					   // get the new gamestate of the world
 # isChecked = isUnderCheck p.player game_s.worldMatrix  			   // check if there is a check in the new world matrix
 # orig_Pst = {updatedPst2 & ls = gs}								   // returning back the new gamestate to the old one 
-| isChecked = orig_Pst												   // if there is a check in the new world matrix, then it is an invalid move.
+| isChecked = case highlight of 
+						True  = goRightRook highlight (xC+1) yC p orig_Pst
+						False = goRightRook highlight (xC+1) yC p orig_Pst												   // if there is a check in the new world matrix, then it is an invalid move.
 | isNothing gs.worldMatrix.[xC + yC * 8] =  case highlight of 
                									True = goRightRook highlight (xC+1) yC p {orig_Pst & io = appWindowPicture (gs.windowId) ((hiliteAt point tile)) io , ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}}  
                									False = goRightRook highlight (xC+1) yC p {orig_Pst & ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}}  
@@ -70,7 +74,9 @@ goForwardRook highlight xC yC p pst=:{ls=gs, io}
 # (game_s , updatedPst2) = getGameState updatedPst					   // get the new gamestate of the world
 # isChecked = isUnderCheck p.player game_s.worldMatrix  			   // check if there is a check in the new world matrix
 # orig_Pst = {updatedPst2 & ls = gs}								   // returning back the new gamestate to the old one 
-| isChecked = orig_Pst												   // if there is a check in the new world matrix, then it is an invalid move.
+| isChecked = case highlight of 
+						True  = goForwardRook highlight xC (yC+1) p orig_Pst
+						False = goForwardRook highlight xC (yC+1) p orig_Pst													   // if there is a check in the new world matrix, then it is an invalid move.
 | isNothing gs.worldMatrix.[xC + yC * 8] = case highlight of 
 												True = goForwardRook highlight xC (yC+1) p {orig_Pst & io = appWindowPicture (gs.windowId) ((hiliteAt point tile)) io , ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}}  
 												False = goForwardRook highlight xC (yC+1) p {orig_Pst & ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}}  
@@ -91,7 +97,9 @@ goBackwardRook highlight xC yC p pst=:{ls=gs, io}
 # (game_s , updatedPst2) = getGameState updatedPst					   // get the new gamestate of the world
 # isChecked = isUnderCheck p.player game_s.worldMatrix  			   // check if there is a check in the new world matrix
 # orig_Pst = {updatedPst2 & ls = gs}								   // returning back the new gamestate to the old one 
-| isChecked = orig_Pst												   // if there is a check in the new world matrix, then it is an invalid move.
+| isChecked = case highlight of 
+						True  = goBackwardRook highlight xC (yC-1) p orig_Pst
+						False = goBackwardRook highlight xC (yC-1) p orig_Pst													   // if there is a check in the new world matrix, then it is an invalid move.
 | isNothing gs.worldMatrix.[xC + yC * 8] = case highlight of 
 												True = goBackwardRook highlight xC (yC-1) p {orig_Pst & io = appWindowPicture (gs.windowId) ((hiliteAt point tile)) io , ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}}  
 												False = goBackwardRook highlight xC (yC-1) p {orig_Pst & ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}}  

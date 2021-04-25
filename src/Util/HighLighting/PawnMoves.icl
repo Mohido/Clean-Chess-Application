@@ -25,8 +25,9 @@ where
 	
 /*One big function to manage moving forward for both white and black pawn pieces.*/
 moveForwardPawn :: Bool Int Int !Piece (*PSt GameState)-> (*PSt GameState)
-moveForwardPawn hightLight xC yC p pst=:{ls, io}
+moveForwardPawn hightLight xC yC p pst=:{ls=gs, io}
 |yC < 0 || yC > 7 = pst
+| not (isNothing gs.worldMatrix.[xC + yC * 8]) && (fromJust gs.worldMatrix.[xC + yC * 8]).player == p.player = pst
 |p.player == BlackPiece = moveForwardPawnAux_b hightLight xC yC p pst
 	 					= moveForwardPawnAux_w hightLight xC yC p pst
 
@@ -92,6 +93,7 @@ where
 moveDiagonallyPawn :: Bool Int Int !Piece (*PSt GameState)-> (*PSt GameState)
 moveDiagonallyPawn highLight xC yC p pst=:{ls = gs, io}
 |xC <0 ||xC > 7  || yC < 0 || yC > 7 = pst
+| not (isNothing gs.worldMatrix.[xC + yC * 8]) && (fromJust gs.worldMatrix.[xC + yC * 8]).player == p.player = pst
 # updatedPst = updateWorldMatrix (xC,yC) (p.xCord + p.yCord * 8) pst   // update the world matrix
 # (game_s , updatedPst2) = getGameState updatedPst					   // get the new gamestate of the world
 # isChecked = isUnderCheck p.player game_s.worldMatrix  			   // check if there is a check in the new world matrix

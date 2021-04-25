@@ -1,6 +1,6 @@
 implementation module Util.Rendering
 
-import StdEnv, StdIO, Util.Constants, Util.CostumFunctions, Util.Highlights, Util.Dialogs, Util.Castling 
+import StdEnv, StdIO, Util.Constants, Util.CostumFunctions, Util.Highlights, Util.Dialogs, Util.Castling, Util.Sounds
 
 
 /*Main Highlighting Function*/
@@ -203,13 +203,16 @@ getPixelValue (x,y) piece
 UpdateGST :: Int Int (*PSt GameState) -> (*PSt GameState)
 UpdateGST mouseUpxCord mouseUpyCord pst=:{ls=gs, io}
 | mouseUpxCord == selectedxCord && selectedyCord == mouseUpyCord 		= pst
-| ((piece.type == Pawn) && ((mouseUpyCord == 7) ||(mouseUpyCord == 0))) = proPst
-| piece.type == Rook    && mouseUpyCord <> 7 = disableRightCastle lastPst
-| piece.type == Rook    && mouseUpyCord <> 0 = disableLeftCastle lastPst 
+| ((piece.type == Pawn) && ((mouseUpyCord == 7) ||(mouseUpyCord == 0))) = playSoundpromotion proPst
+| piece.type == Rook    && mouseUpyCord <> 7 = playSound (disableRightCastle lastPst)
+| piece.type == Rook    && mouseUpyCord <> 0 = playSound (disableLeftCastle lastPst) 
 | piece.type == King    && (mouseUpxCord <> 6 && mouseUpyCord <> selectedyCord)  && (mouseUpxCord <> 2 && mouseUpyCord <> selectedyCord) = disableBothCastle lastPst
 | piece.type == King = checkCastle mouseUpxCord mouseUpyCord lastPst
-= lastPst
+= playSound lastPst
 where
+	playSound					  = case gs.worldMatrix.[mouseUpxCord + mouseUpyCord*8] of
+									Nothing = playSoundmove
+									Just p  = playSoundCapture
 	proPst 		 				  = promotion mouseUpxCord mouseUpyCord pst
 	piece		 				  = fromJust gs.selectedPiece
 	(selectedxCord,selectedyCord) = (piece.xCord,piece.yCord)

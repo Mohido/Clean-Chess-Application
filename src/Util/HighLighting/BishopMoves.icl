@@ -36,7 +36,9 @@ ForwardMovesAlongMainDiagonal highlight xC yC p pst=:{ls=gs, io}
 # (game_s , updatedPst2) = getGameState updatedPst					   // get the new gamestate of the world
 # isChecked = isUnderCheck p.player game_s.worldMatrix  			   // check if there is a check in the new world matrix
 # orig_Pst = {updatedPst2 & ls = gs}								   // returning back the new gamestate to the old one 
-| isChecked = orig_Pst												   // if there is a check in the new world matrix, then it is an invalid move.
+| isChecked = case highlight of 
+						True  = ForwardMovesAlongMainDiagonal highlight (xC-1) (yC+1) p orig_Pst
+						False = ForwardMovesAlongMainDiagonal highlight (xC-1) (yC+1) p orig_Pst												   // if there is a check in the new world matrix, then it is an invalid move.
 | isNothing gs.worldMatrix.[xC + yC * 8] = case highlight of
 												True = ForwardMovesAlongMainDiagonal highlight (xC-1) (yC+1) p {orig_Pst & io = appWindowPicture (gs.windowId) ((hiliteAt point tile)) io , ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}}  
 												False = ForwardMovesAlongMainDiagonal highlight (xC-1) (yC+1) p {orig_Pst & ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}}  
@@ -56,7 +58,9 @@ BackWardMovesAlongMainDiagonal highlight xC yC p pst=:{ls=gs, io}
 # (game_s , updatedPst2) = getGameState updatedPst					   // get the new gamestate of the world
 # isChecked = isUnderCheck p.player game_s.worldMatrix  			   // check if there is a check in the new world matrix
 # orig_Pst = {updatedPst2 & ls = gs}								   // returning back the new gamestate to the old one 
-| isChecked = orig_Pst												   // if there is a check in the new world matrix, then it is an invalid move.
+| isChecked = case highlight of 
+						True  = ForwardMovesAlongMainDiagonal highlight (xC+1) (yC-1) p orig_Pst
+						False = ForwardMovesAlongMainDiagonal highlight (xC+1) (yC-1) p orig_Pst													   // if there is a check in the new world matrix, then it is an invalid move.
 | isNothing gs.worldMatrix.[xC + yC * 8] = case highlight of
 												True = BackWardMovesAlongMainDiagonal highlight (xC+1) (yC-1) p {orig_Pst & io = appWindowPicture (gs.windowId) ((hiliteAt point tile)) io , ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}}  
 												False = BackWardMovesAlongMainDiagonal highlight (xC+1) (yC-1) p {orig_Pst & ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}}  
@@ -78,7 +82,9 @@ ForwardMovesAlongAntiDiagonal highlight xC yC p pst=:{ls=gs, io}
 # (game_s , updatedPst2) = getGameState updatedPst					   // get the new gamestate of the world
 # isChecked = isUnderCheck p.player game_s.worldMatrix  			   // check if there is a check in the new world matrix
 # orig_Pst = {updatedPst2 & ls = gs}								   // returning back the new gamestate to the old one 
-| isChecked = orig_Pst												   // if there is a check in the new world matrix, then it is an invalid move.
+| isChecked = case highlight of 
+						True  = ForwardMovesAlongAntiDiagonal highlight (xC+1) (yC+1) p orig_Pst
+						False = ForwardMovesAlongAntiDiagonal highlight (xC+1) (yC+1) p orig_Pst													   // if there is a check in the new world matrix, then it is an invalid move.
 | isNothing gs.worldMatrix.[xC + yC * 8] = case highlight of
 												True = ForwardMovesAlongAntiDiagonal highlight (xC + 1) (yC+1) p {orig_Pst & io = appWindowPicture (gs.windowId) ((hiliteAt point tile)) io , ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}}  
 												False = ForwardMovesAlongAntiDiagonal highlight (xC + 1) (yC+1) p {orig_Pst & ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}}  
@@ -99,7 +105,9 @@ BackWardMovesAlongAntiDiagonal highlight xC yC p pst=:{ls=gs, io}
 # (game_s , updatedPst2) = getGameState updatedPst					   // get the new gamestate of the world
 # isChecked = isUnderCheck p.player game_s.worldMatrix  			   // check if there is a check in the new world matrix
 # orig_Pst = {updatedPst2 & ls = gs}								   // returning back the new gamestate to the old one 
-| isChecked = orig_Pst												   // if there is a check in the new world matrix, then it is an invalid move.
+| isChecked = case highlight of 
+						True  = ForwardMovesAlongAntiDiagonal highlight (xC-1) (yC-1) p orig_Pst
+						False = ForwardMovesAlongAntiDiagonal highlight (xC-1) (yC-1) p orig_Pst												   // if there is a check in the new world matrix, then it is an invalid move.
 | isNothing gs.worldMatrix.[xC + yC * 8] = case highlight of
 											  True = BackWardMovesAlongAntiDiagonal highlight (xC-1) (yC-1) p {orig_Pst & io = appWindowPicture (gs.windowId) ((hiliteAt point tile)) io , ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}}  
 											  False = BackWardMovesAlongAntiDiagonal highlight (xC-1) (yC-1) p {orig_Pst & ls = {gs & validMoves = updateBool (xC + yC * 8) gs.validMoves}}  

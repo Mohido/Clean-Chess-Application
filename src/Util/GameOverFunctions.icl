@@ -24,10 +24,10 @@ where
 	# (game_s, validPst) = getGameState validPst
 	# foundValid = or [ move \\ move <-: game_s.validMoves]
 	# orig_pst = {validPst & ls = gs}
-	| foundValid = trace_n ( "Checking: " +++ toString (fromJust p) +++ "\n") (False, orig_pst) /// game not over
-	=trace_n ( "Checking: " +++ toString (fromJust p)) (searchValidMoves rest orig_pst)
-
-
+	| foundValid = (False, orig_pst) /// game not over
+	=(searchValidMoves rest orig_pst)
+//trace_n ( "Checking: " +++ toString (fromJust p)) 
+//trace_n ( "Checking: " +++ toString (fromJust p) +++ "\n") 
 
 /*
 * A function that takes an index of the player and gamestate.

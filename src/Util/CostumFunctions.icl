@@ -34,7 +34,14 @@ updatePiece xC yC (Just p) = Just {p & xCord = xC , yCord = yC}
 
 
 
+/*
+printPieces :: (*PSt GameState) -> ((*PSt GameState),String) 
+printPieces pst=:{ls,io} = (pst,prints [a \\ a<-:ls.worldMatrix])
 
+prints []    = "\n"
+prints [x:xs]
+|(isNothing x) = ".\n"+++ prints xs
+=toString (fromJust x) +++ prints xs*/
 
 
 

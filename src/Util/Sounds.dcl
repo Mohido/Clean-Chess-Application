@@ -5,7 +5,17 @@ import StdEnv, StdIO, Util.Constants
 playSoundmove :: (*PSt GameState) -> (*PSt GameState) 
 
 playSoundpromotion :: (*PSt GameState) -> (*PSt GameState) 
+
 playSoundCapture :: (*PSt GameState) -> (*PSt GameState) 
+
+playSoundCastling :: (*PSt GameState) -> (*PSt GameState) 
+
+playSoundCheck :: (*PSt GameState) -> (*PSt GameState) 
+
+playSoundCheckMate :: (*PSt GameState) -> (*PSt GameState) 
+
+
+
 
 class playSoundFile env :: !String !*env -> (!Bool,!*env)
 
